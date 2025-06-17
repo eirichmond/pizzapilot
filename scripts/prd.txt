@@ -1,0 +1,111 @@
+## Product Requirements Document – PizzaPilot (Free Version)
+
+**Plugin Name:** PizzaPilot
+**Version:** Free
+**Author:** Business in a Pizza Box
+**Target Platform:** WordPress + WooCommerce
+
+---
+
+# Overview
+
+PizzaPilot Free is a WordPress plugin designed to support small-scale pizza delivery businesses by offering core delivery logic and kitchen workflow features integrated with WooCommerce. It helps pizzerias manage time-slot-based ordering, basic delivery eligibility checks, and kitchen order management, providing a foundational experience that can be extended with a Pro upgrade.
+
+---
+
+# Core Features (Free Version)
+
+## 1. Manual Time Slot Creation
+
+- Admin manually defines delivery slots (e.g. 17:00–17:30).
+- Each slot has a maximum pizza quantity allowed.
+- Slots stored in database table `pizzapilot_order_slots` with key index of slot_id, date, start_time, end_time, availability, order_id, created_at, updated_at.
+
+#### 2. Pizza Quantity Deduction per Slot
+
+- Slot pizza count (availability) decreases based on quantity added to cart.
+- When slot reaches zero, it becomes unavailable to new customers.
+
+#### 3. Slot Locking Logic
+
+- Automatic disabling of fully booked slots.
+- Customers prompted to select the next available slot.
+
+#### 4. Time Slot Selection at Checkout
+
+- Slot dropdown shown at checkout.
+- Only shows available slots for the current day.
+- Stores selected slot as order meta data.
+
+#### 5. Same-Day Delivery Only (Hardcoded)
+
+- Only today's slots are displayed.
+- Future dates are disabled in the free version.
+- Setting toggle is visible but greyed out (upgrade callout).
+
+#### 6. Basic Delivery Radius Checker
+
+- Admin sets delivery location (postcode).
+- Admin defines maximum delivery radius (in km or miles).
+- Customer enters postcode to check eligibility.
+- Simple in/out logic (no mapping API).
+- Optionally fallback to collection if out of range.
+
+#### 7. Kitchen Order Interface (Basic)
+
+- Admin-only screen in WP dashboard.
+- Orders grouped by time slot.
+- View includes: Customer name, items, slot time.
+- Basic toggle to mark an order as completed.
+- Manual page refresh required.
+
+#### 8. WooCommerce Compatibility
+
+- Uses standard product types and cart/checkout flow.
+- Time slot data saved in WooCommerce order meta.
+- Displays slot info in admin order details.
+
+---
+
+### ⚙️ Admin Settings Panel
+
+- Enable/disable plugin features.
+- Set delivery postcode.
+- Set delivery radius.
+- Create/edit/delete time slots.
+- Assign max pizza per slot.
+- View-only toggle: "Same-Day Delivery Only" (locked in free).
+
+---
+
+### 🚫 Not Included in Free Version (Pro Features)
+
+- Future date selection & multi-day scheduling.
+- Auto-generated recurring time slots.
+- Drag-and-drop kitchen UI with live updates.
+- Geolocation or Google/Apple Maps API.
+- Customer notifications or delivery route optimisation.
+- Per-product prep weight for slot deduction.
+
+---
+
+### 🎯 Target User
+
+Independent or small pizza businesses that:
+
+- Take pre-orders via WooCommerce.
+- Offer local delivery and/or collection.
+- Need basic slot/time-based kitchen management.
+
+---
+
+### 🔄 Upgrade Path
+
+- Locked features shown in UI (e.g. disabled toggles or tooltips).
+- Prompt: "Unlock this feature with PizzaPilot Pro"
+
+---
+
+### 📅 Versioning & Roadmap Notes
+
+This document covers only the Free version. Pro version PRD will extend upon these features and introduce a modular delivery/kitchen ecosystem.
