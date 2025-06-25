@@ -40,6 +40,6 @@ class Pizzapilot_Helpers {
      * @return   string               The formatted upgrade message.
      */
     public static function pizzapilot_pro_upgrade_message( ) {
-        return 'This feature is only available in <a href="https://pizzapilot.co.uk/pricing/">Pro version of PizzaPilot.</a>';
+        return 'Upgrade to <a href="https://pizzapilot.co.uk/pricing/">Pro version of PizzaPilot.</a> for more advanced features.';
     }
 } 

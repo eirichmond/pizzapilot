@@ -100,4 +100,54 @@ class Pizzapilot_Public {
 
 	}
 
+
+	public function pizzapilot_register_checkout_fields() {
+		$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
+		$slots = $settings->get_formatted_delivery_slots();
+
+		// Convert to options format
+		$options = array();
+		foreach ( $slots as $timestamp => $label ) {
+			$options[] = array(
+				'value' => $timestamp,
+				'label' => $label
+			);
+		}
+
+		woocommerce_register_additional_checkout_field(
+			array(
+				'id'          => 'pizzapilot/delivery-type',
+				'label'       => __( 'Delivery Options', 'pizzapilot' ),
+				'location'    => 'order',
+				'type'        => 'select',
+				'required'    => true,
+				'placeholder' => 'Select a delivery type',
+				'options'     => array(
+					array(
+						'value' => 'delivery',
+						'label' => 'Delivery'
+					),
+					array(
+						'value' => 'collect',
+						'label' => 'Collect'
+					)
+				)
+			)
+		);
+
+		woocommerce_register_additional_checkout_field(
+			array(
+				'id'          => 'pizzapilot/delivery-time',
+				'label'       => __( 'Delivery Time', 'pizzapilot' ),
+				'location'    => 'order',
+				'type'        => 'select',
+				'required'    => true,
+				'placeholder' => 'Select a time',
+				'options'     => $options
+			)
+		);
+
+		
+	}
+
 }

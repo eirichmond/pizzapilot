@@ -108,9 +108,6 @@ class Pizzapilot_Settings {
 				<a href="?page=pizzapilot-settings&tab=delivery" class="nav-tab <?php echo $active_tab == 'delivery' ? 'nav-tab-active' : ''; ?>">
 					<?php echo esc_html__( 'Delivery', 'pizzapilot' ); ?>
 				</a>
-				<a href="?page=pizzapilot-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>">
-					<?php echo esc_html__( 'Advanced', 'pizzapilot' ); ?>
-				</a>
 				<?php
 				/**
 				 * Filter to add additional tabs to the PizzaPilot settings page.
@@ -119,6 +116,9 @@ class Pizzapilot_Settings {
 				 */
 				do_action( 'pizzapilot_settings_tabs', $active_tab );
 				?>
+				<a href="?page=pizzapilot-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>">
+					<?php echo esc_html__( 'Advanced', 'pizzapilot' ); ?>
+				</a>
 			</h2>
 
 			<form method="post" action="options.php">
@@ -161,6 +161,9 @@ class Pizzapilot_Settings {
 	 * @return   void
 	 */
 	public function ppilot_register_settings() {
+		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
+
 		// Register General Settings
 		register_setting(
 			'pizzapilot_general_settings',
@@ -246,21 +249,67 @@ class Pizzapilot_Settings {
 			'pizzapilot_delivery' 
 		);
 
+		/**
+		 * Callback to render the Delivery Start Time input field.
+		 *
+		 * Outputs a time input for the delivery start time setting on the Delivery tab.
+		 * Uses the value from settings or defaults to '09:30'.
+		 *
+		 * @since    1.0.0
+		 * @return   void
+		 */
+		if ( !$pro_active ) {
+			add_settings_field(
+				'pizzapilot_delivery_start_time',
+				esc_html__( 'Delivery Start Time', 'pizzapilot' ),
+				array( $this, 'delivery_start_time_callback' ),
+				'pizzapilot-settings-delivery',
+				'pizzapilot_delivery'
+			);
+		}
+		/**
+		 * Callback to render the Delivery End Time input field.
+		 *
+		 * Outputs a time input for the delivery end time setting on the Delivery tab.
+		 * Uses the value from settings or defaults to '17:30'.
+		 *
+		 * @since    1.0.0
+		 * @return   void
+		 */
+		if ( !$pro_active ) {
+			add_settings_field(
+				'pizzapilot_delivery_end_time',
+				esc_html__( 'Delivery End Time', 'pizzapilot' ),
+				array( $this, 'delivery_end_time_callback' ),
+				'pizzapilot-settings-delivery',
+				'pizzapilot_delivery'
+			);
+		}
+
 		// Advanced Settings Tab - Pro features and advanced options
 		add_settings_section( 
 			'pizzapilot_advanced', 
-			esc_html__( 'Advanced Settings', 'pizzapilot' ), 
-			array( $this, 'advanced_section_callback' ), 
-			'pizzapilot-settings-advanced' 
+			esc_html__( 'Advanced Settings', 'pizzapilot' ),
+			array( $this, 'advanced_section_callback' ),
+			'pizzapilot-settings-advanced'
 		);
 
 		add_settings_field( 
 			'pizzapilot_same_day_only', 
-			esc_html__( 'Same-Day Delivery Only', 'pizzapilot' ), 
-			array( $this, 'same_day_only_callback' ), 
-			'pizzapilot-settings-advanced', 
-			'pizzapilot_advanced' 
+			esc_html__( 'Same-Day Delivery Only', 'pizzapilot' ),
+			array( $this, 'same_day_only_callback' ),
+			'pizzapilot-settings-advanced',
+			'pizzapilot_advanced'
 		);
+
+		/**
+		 * Allow Pro plugin to add its own settings fields
+		 * 
+		 * @param bool $pro_active Whether the Pro plugin is active
+		 * @param string $settings_page The settings page slug
+		 * @param string $section_id The section ID
+		 */
+		do_action( 'pizzapilot_register_pro_settings', $pro_active, 'pizzapilot-settings-advanced', 'pizzapilot_advanced' );
 	}
 
 	/**
@@ -288,8 +337,33 @@ class Pizzapilot_Settings {
 		$sanitized['radius_unit'] = isset( $input['radius_unit'] ) && in_array( $input['radius_unit'], array( 'km', 'miles' ) ) ? $input['radius_unit'] : 'km';
 		$sanitized['delivery_postcode'] = isset( $input['delivery_postcode'] ) ? sanitize_text_field( $input['delivery_postcode'] ) : '';
 		$sanitized['delivery_radius'] = isset( $input['delivery_radius'] ) ? absint( $input['delivery_radius'] ) : 5;
+		
+		// Sanitize delivery start time
+		if ( isset( $input['delivery_start_time'] ) ) {
+			// Validate time format (HH:mm)
+			if ( preg_match( '/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/', $input['delivery_start_time'] ) ) {
+				$sanitized['delivery_start_time'] = $input['delivery_start_time'];
+			} else {
+				$sanitized['delivery_start_time'] = '10:00'; // Default if invalid
+			}
+		} else {
+			$sanitized['delivery_start_time'] = '10:00';
+		}
+
+		// Sanitize delivery end time
+		if ( isset( $input['delivery_end_time'] ) ) {
+			if ( preg_match( '/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/', $input['delivery_end_time'] ) ) {
+				$sanitized['delivery_end_time'] = $input['delivery_end_time'];
+			} else {
+				$sanitized['delivery_end_time'] = '17:30';
+			}
+		} else {
+			$sanitized['delivery_end_time'] = '17:30';
+		}
+		
 		return $sanitized;
 	}
+	
 
 	/**
 	 * Sanitize advanced settings
@@ -302,6 +376,15 @@ class Pizzapilot_Settings {
 		// For checkboxes, we need to explicitly check if the key exists in the input
 		// If it doesn't exist, it means the checkbox was unchecked
 		$sanitized['same_day_only'] = isset( $input['same_day_only'] ) ? true : false;
+		
+		/**
+		 * Allow Pro plugin to add its own sanitization
+		 * 
+		 * @param array $sanitized The sanitized array so far
+		 * @param array $input The raw input array
+		 */
+		$sanitized = apply_filters( 'pizzapilot_sanitize_pro_settings', $sanitized, $input );
+		
 		return $sanitized;
 	}
 
@@ -312,11 +395,18 @@ class Pizzapilot_Settings {
 	 * @param mixed $default Default value if setting doesn't exist
 	 * @return mixed The setting value
 	 */
-	private function get_setting( $key, $default = null ) {
+	public function get_setting( $key, $default = null ) {
 		// Determine which option group the key belongs to
 		$general_keys = array( 'enabled' );
-		$delivery_keys = array( 'radius_unit', 'delivery_postcode', 'delivery_radius' );
+		$delivery_keys = array( 'radius_unit', 'delivery_postcode', 'delivery_radius', 'delivery_start_time', 'delivery_end_time' );
 		$advanced_keys = array( 'same_day_only' );
+
+		/**
+		 * Allow Pro plugin to add its own setting keys
+		 * 
+		 * @param array $advanced_keys Current advanced setting keys
+		 */
+		$advanced_keys = apply_filters( 'pizzapilot_advanced_setting_keys', $advanced_keys );
 
 		if ( in_array( $key, $general_keys ) ) {
 			$settings = get_option( 'pizzapilot_general_settings', array() );
@@ -411,6 +501,42 @@ class Pizzapilot_Settings {
 	}
 
 	/**
+	 * Callback to render the Delivery Start Time input field.
+	 *
+	 * Outputs a time input for the delivery start time setting on the Delivery tab.
+	 * Uses the value from settings or defaults to '09:30'.
+	 *
+	 * @since    1.0.0
+	 * @return   void
+	 */
+	public function delivery_start_time_callback() {
+		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
+
+		$option = $this->get_setting( 'delivery_start_time', '09:30' );
+
+		echo '<input type="time" id="pizzapilot_delivery_start_time" name="pizzapilot_delivery_settings[delivery_start_time]" value="' . esc_attr( $option ) . '" class="regular-text" />';
+		echo '<label for="pizzapilot_delivery_start_time"> ' . esc_html__( 'Enter the delivery start time.', 'pizzapilot' ) . '</label>';
+		if ( !$pro_active ) {
+			echo '<p class="description"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</p>';
+		}
+	}
+
+	public function delivery_end_time_callback() {
+		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
+
+		$option = $this->get_setting( 'delivery_end_time', '17:30' );
+
+		echo '<input type="time" id="pizzapilot_delivery_end_time" name="pizzapilot_delivery_settings[delivery_end_time]" value="' . esc_attr( $option ) . '" class="regular-text" />';
+		echo '<label for="pizzapilot_delivery_end_time"> ' . esc_html__( 'Enter the delivery end time.', 'pizzapilot' ) . '</label>';
+		if ( !$pro_active ) {
+			echo '<p class="description"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</p>';
+		}
+
+	}
+
+	/**
 	 * Callback to render the Same-Day Delivery Only checkbox.
 	 */
 	public function same_day_only_callback() {
@@ -421,9 +547,105 @@ class Pizzapilot_Settings {
 			// Use checked() with the actual boolean value
 			echo '<input type="checkbox" id="pizzapilot_same_day_only" name="pizzapilot_advanced_settings[same_day_only]" value="1"' . checked( true, $option, false ) . ' />';
 			echo '<label for="pizzapilot_same_day_only"> ' . esc_html__( 'Only allow same-day delivery orders.', 'pizzapilot' ) . '</label>';
+			echo '<p class="description">' . esc_html__( 'Note: Changing this setting will require saving and refreshing the page to show/hide slot countdown options.', 'pizzapilot' ) . '</p>';
 		} else {
 			echo '<input type="checkbox" id="pizzapilot_same_day_only" name="pizzapilot_advanced_settings[same_day_only]" value="1" class="regular-text" disabled checked/>';
 			echo '<label for="pizzapilot_same_day_only"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</label>';
 		}
+	}
+
+	/**
+	 * Get available delivery time slots between start and end times
+	 *
+	 * Generates an array of 30-minute time slots for today between the configured
+	 * delivery start and end times. Returns unix timestamps as keys and formatted
+	 * date/time strings as values. Only returns time slots that haven't elapsed
+	 * with a 20-minute buffer (slots are removed 20 minutes after they start).
+	 *
+	 * @since    1.0.0
+	 * @return   array    Array of time slots with timestamp keys and formatted values
+	 */
+	private function get_delivery_time_slots() {
+
+		$start_time = $this->get_setting( 'delivery_start_time', '09:30' );
+		$end_time   = $this->get_setting( 'delivery_end_time', '17:30' );
+
+		$slots = array();
+
+		// Get WordPress timezone
+		$timezone = wp_timezone();
+
+		// Create DateTime objects for today with the configured times
+		$today = new DateTime( 'today', $timezone );
+		$start = DateTime::createFromFormat( 'H:i', $start_time, $timezone );
+		$end   = DateTime::createFromFormat( 'H:i', $end_time, $timezone );
+
+		if ( false === $start || false === $end ) {
+			return $slots; // Return empty array if invalid times
+		}
+
+		// Set the date to today for start and end times
+		$start->setDate( $today->format( 'Y' ), $today->format( 'm' ), $today->format( 'd' ) );
+		$end->setDate( $today->format( 'Y' ), $today->format( 'm' ), $today->format( 'd' ) );
+
+		// Get current time in the same timezone
+		$now = new DateTime( 'now', $timezone );
+
+		// Add 30 minutes until we reach or exceed end time
+		$current = clone $start;
+		while ( $current < $end ) {
+			$slot_end = clone $current;
+			$slot_end->modify( '+30 minutes' );
+
+			// Don't create a slot if it would go beyond the end time
+			if ( $slot_end > $end ) {
+				break;
+			}
+
+			// Calculate the cutoff time (20 minutes into the slot, or 10 minutes before slot ends)
+			$slot_cutoff = clone $current;
+			$slot_cutoff->modify( '+20 minutes' );
+
+			// Only include slots where current time hasn't passed the 20-minute cutoff
+			if ( $now < $slot_cutoff ) {
+				// Create unix timestamp key
+				$timestamp = $current->getTimestamp();
+
+				// Create formatted value: 'Tuesday 24th Jun from 9:30am to 10:30am'
+				$day_name = $current->format( 'l' ); // Tuesday
+				$day_number = $current->format( 'jS' ); // 24th
+				$month = $current->format( 'M' ); // Jun
+				$start_time_formatted = $current->format( 'g:ia' ); // 9:30am
+				$end_time_formatted = $slot_end->format( 'g:ia' ); // 10:00am
+
+				$value = sprintf( '%s %s %s from %s to %s', $day_name, $day_number, $month, $start_time_formatted, $end_time_formatted );
+
+				$slots[ $timestamp ] = $value;
+			}
+
+			$current->modify( '+30 minutes' );
+		}
+
+		return $slots;
+	}
+
+	/**
+	 * Get formatted delivery time slots for display
+	 *
+	 * Returns an array of time slots with both 24-hour and 12-hour formats
+	 * suitable for display in dropdowns or other UI elements.
+	 *
+	 * @since    1.0.0
+	 * @return   array    Array of arrays with 'value' (24h) and 'label' (12h) format times
+	 */
+	public function get_formatted_delivery_slots() {
+		$slots = $this->get_delivery_time_slots();
+		
+		// die early if no slots are found
+		if ( empty( $slots ) ) {
+			return array();
+		}
+		
+		return apply_filters( 'pizzapilot_time_slots', $slots );
 	}
 }

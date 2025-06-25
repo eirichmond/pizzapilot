@@ -195,6 +195,10 @@ class Pizzapilot {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
+		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'pizzapilot_register_checkout_fields' );
+
+
 	}
 
 	/**
