@@ -1,0 +1,80 @@
+# Task ID: 7
+# Title: Basic Delivery Radius Checker
+# Status: pending
+# Dependencies: 3
+# Priority: medium
+# Description: Implement the delivery radius checker that validates customer postcodes against the configured delivery area.
+# Details:
+1. Create a function to calculate distance between two postcodes
+2. Add postcode validation field to checkout
+3. Implement in/out logic based on configured radius
+4. Add option to fallback to collection if out of range
+5. Display appropriate messages to customers
+
+```php
+class PizzaPilot_Delivery_Checker {
+    public function __construct() {
+        add_action('woocommerce_before_checkout_form', array($this, 'add_postcode_checker'));
+        add_action('wp_ajax_check_delivery_eligibility', array($this, 'ajax_check_delivery_eligibility'));
+        add_action('wp_ajax_nopriv_check_delivery_eligibility', array($this, 'ajax_check_delivery_eligibility'));
+        add_action('woocommerce_checkout_process', array($this, 'validate_delivery_eligibility'));
+    }
+    
+    public function add_postcode_checker() {
+        // Output HTML for postcode checker
+        echo '<div class="pizzapilot-postcode-checker">';
+        echo '<h3>Check Delivery Availability</h3>';
+        echo '<input type="text" id="pizzapilot-postcode" placeholder="Enter your postcode">';
+        echo '<button type="button" id="pizzapilot-check-postcode">Check</button>';
+        echo '<div id="pizzapilot-postcode-result"></div>';
+        echo '</div>';
+        
+        // Add JavaScript to handle AJAX request
+    }
+    
+    public function ajax_check_delivery_eligibility() {
+        $postcode = sanitize_text_field($_POST['postcode']);
+        $store_postcode = get_option('pizzapilot_delivery_postcode');
+        $max_radius = get_option('pizzapilot_delivery_radius', 5);
+        $radius_unit = get_option('pizzapilot_radius_unit', 'km');
+        
+        $distance = $this->calculate_postcode_distance($store_postcode, $postcode);
+        
+        $response = array();
+        if ($distance <= $max_radius) {
+            $response['eligible'] = true;
+            $response['message'] = 'Good news! We deliver to your area.';
+        } else {
+            $response['eligible'] = false;
+            $response['message'] = 'Sorry, your location is outside our delivery area. You can still order for collection.';
+        }
+        
+        wp_send_json($response);
+    }
+    
+    private function calculate_postcode_distance($postcode1, $postcode2) {
+        // In free version, implement a simple distance calculation
+        // This could be based on postcode prefix matching or a simple lookup table
+        // For a basic implementation, we'll use a random distance for demonstration
+        // In a real implementation, you would use a proper geocoding service or database
+        
+        // Simple implementation - first character matching gives closer distance
+        if (substr($postcode1, 0, 1) === substr($postcode2, 0, 1)) {
+            return rand(1, 3); // 1-3 km/miles if first character matches
+        } else {
+            return rand(5, 10); // 5-10 km/miles if first character doesn't match
+        }
+    }
+    
+    public function validate_delivery_eligibility() {
+        // Implement checkout validation for delivery eligibility
+    }
+}
+```
+
+# Test Strategy:
+1. Test with postcodes inside and outside delivery radius
+2. Verify appropriate messages are displayed to customers
+3. Test fallback to collection option works correctly
+4. Verify checkout validation prevents orders with invalid delivery postcodes
+5. Test with various postcode formats to ensure robust handling

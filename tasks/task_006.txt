@@ -1,0 +1,72 @@
+# Task ID: 6
+# Title: Pizza Quantity Deduction Logic
+# Status: pending
+# Dependencies: 2, 5
+# Priority: medium
+# Description: Implement the logic to decrease slot availability based on pizza quantity added to cart and lock fully booked slots.
+# Details:
+1. Create a function to count pizza items in cart
+2. Implement temporary reservation when slot is selected
+3. Update slot availability when order is placed
+4. Release slot if order is cancelled or abandoned
+5. Implement slot locking when availability reaches zero
+
+```php
+class PizzaPilot_Slot_Manager {
+    public function __construct() {
+        add_action('woocommerce_order_status_changed', array($this, 'handle_order_status_change'), 10, 4);
+        add_action('woocommerce_checkout_update_order_meta', array($this, 'update_slot_availability'));
+    }
+    
+    public function count_pizzas_in_order($order_id) {
+        $order = wc_get_order($order_id);
+        $pizza_count = 0;
+        
+        foreach ($order->get_items() as $item) {
+            // In free version, we count each product as 1 pizza
+            $pizza_count += $item->get_quantity();
+        }
+        
+        return $pizza_count;
+    }
+    
+    public function update_slot_availability($order_id) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pizzapilot_order_slots';
+        
+        $slot_id = get_post_meta($order_id, '_pizzapilot_time_slot_id', true);
+        if (!$slot_id) return;
+        
+        $pizza_count = $this->count_pizzas_in_order($order_id);
+        
+        // Update slot availability
+        $wpdb->query($wpdb->prepare(
+            "UPDATE $table_name 
+            SET availability = availability - %d, 
+                order_id = %d 
+            WHERE slot_id = %d",
+            $pizza_count,
+            $order_id,
+            $slot_id
+        ));
+    }
+    
+    public function handle_order_status_change($order_id, $from_status, $to_status, $order) {
+        // If order is cancelled, refund the slot availability
+        if ($to_status === 'cancelled') {
+            $this->release_slot($order_id);
+        }
+    }
+    
+    private function release_slot($order_id) {
+        // Implement logic to release slot when order is cancelled
+    }
+}
+```
+
+# Test Strategy:
+1. Test adding different quantities of pizzas to cart
+2. Verify slot availability decreases correctly when order is placed
+3. Test cancelling orders returns availability to the slot
+4. Verify fully booked slots are no longer selectable
+5. Test concurrent orders to ensure race conditions are handled
