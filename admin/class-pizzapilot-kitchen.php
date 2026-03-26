@@ -96,12 +96,87 @@ class PizzaPilot_Kitchen {
 			echo '</div>';
 		} else {
 			foreach ( $grouped_orders as $slot_label => $orders ) {
-				echo '<h2>' . esc_html( $slot_label ) . ' (' . count( $orders ) . ')</h2>';
-				foreach ( $orders as $order ) {
-					echo '<p>' . esc_html( sprintf( __( 'Order #%d', 'pizzapilot' ), $order->get_id() ) ) . '</p>';
-				}
+				$this->render_slot_group( $slot_label, $orders );
 			}
 		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * Render a group of orders under a time slot heading.
+	 *
+	 * @since    1.1.0
+	 * @param    string $slot_label    The time slot label (e.g., "2:00 PM - 2:30 PM").
+	 * @param    array  $orders        Array of WC_Order objects in this slot.
+	 * @return   void
+	 */
+	private function render_slot_group( $slot_label, $orders ) {
+		$order_count = count( $orders );
+
+		echo '<div class="pizzapilot-slot-group">';
+		echo '<h2 class="pizzapilot-slot-heading">';
+		echo esc_html( $slot_label );
+		echo ' <span class="pizzapilot-slot-count">';
+		echo '(' . esc_html(
+			sprintf(
+				/* translators: %d: number of orders */
+				_n( '%d order', '%d orders', $order_count, 'pizzapilot' ),
+				$order_count
+			)
+		) . ')';
+		echo '</span>';
+		echo '</h2>';
+
+		echo '<div class="pizzapilot-order-cards">';
+		foreach ( $orders as $order ) {
+			$this->render_order_card( $order );
+		}
+		echo '</div>';
+
+		echo '</div>';
+	}
+
+	/**
+	 * Render a single order card.
+	 *
+	 * @since    1.1.0
+	 * @param    WC_Order $order    The WooCommerce order object.
+	 * @return   void
+	 */
+	private function render_order_card( $order ) {
+		$order_id      = $order->get_id();
+		$customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+
+		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
+		if ( empty( $delivery_type ) ) {
+			$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
+		}
+
+		echo '<div class="pizzapilot-order-card">';
+
+		echo '<div class="pizzapilot-order-card-header">';
+		echo '<h3>';
+		echo '<a href="' . esc_url( $order->get_edit_order_url() ) . '">';
+		/* translators: %d: order number */
+		echo esc_html( sprintf( __( 'Order #%d', 'pizzapilot' ), $order_id ) );
+		echo '</a>';
+		echo ' &mdash; ' . esc_html( $customer_name );
+		echo '</h3>';
+		if ( ! empty( $delivery_type ) ) {
+			echo '<span class="pizzapilot-delivery-type pizzapilot-delivery-type--' . esc_attr( $delivery_type ) . '">';
+			echo esc_html( ucfirst( $delivery_type ) );
+			echo '</span>';
+		}
+		echo '</div>';
+
+		echo '<ul class="pizzapilot-order-items">';
+		foreach ( $order->get_items() as $item ) {
+			echo '<li>';
+			echo esc_html( $item->get_quantity() . 'x ' . $item->get_name() );
+			echo '</li>';
+		}
+		echo '</ul>';
 
 		echo '</div>';
 	}
