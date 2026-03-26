@@ -70,6 +70,27 @@ class PizzaPilot_Kitchen {
 	}
 
 	/**
+	 * Enqueue styles for the kitchen page.
+	 *
+	 * @since    1.1.0
+	 * @param    string $hook_suffix    The current admin page hook suffix.
+	 * @return   void
+	 */
+	public function enqueue_kitchen_styles( $hook_suffix ) {
+		if ( 'toplevel_page_pizzapilot-kitchen' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			$this->plugin_name . '-kitchen',
+			plugin_dir_url( __FILE__ ) . 'css/pizzapilot-kitchen.css',
+			array(),
+			$this->version,
+			'all'
+		);
+	}
+
+	/**
 	 * Render the kitchen orders admin page.
 	 *
 	 * @since    1.1.0
