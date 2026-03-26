@@ -1,0 +1,155 @@
+/**
+ * PizzaPilot Kitchen Orders Interface
+ *
+ * @package    Pizzapilot
+ * @subpackage Pizzapilot/admin/css
+ * @since      1.1.0
+ */
+
+.pizzapilot-kitchen-wrap {
+	max-width: 1200px;
+}
+
+.pizzapilot-kitchen-actions {
+	margin-bottom: 20px;
+}
+
+.pizzapilot-kitchen-empty {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #d63638;
+	padding: 20px;
+	margin-top: 10px;
+}
+
+/* Slot group */
+.pizzapilot-slot-group {
+	margin-bottom: 30px;
+}
+
+.pizzapilot-slot-heading {
+	font-size: 18px;
+	padding: 10px 15px;
+	background: #2271b1;
+	color: #fff;
+	margin: 0 0 1px 0;
+	border-radius: 4px 4px 0 0;
+}
+
+.pizzapilot-slot-count {
+	font-weight: 400;
+	font-size: 14px;
+	opacity: 0.8;
+}
+
+/* Order cards grid */
+.pizzapilot-order-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1px;
+	background: #c3c4c7;
+	border: 1px solid #c3c4c7;
+	border-top: 0;
+	border-radius: 0 0 4px 4px;
+}
+
+/* Individual order card */
+.pizzapilot-order-card {
+	background: #fff;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+}
+
+.pizzapilot-order-card.pizzapilot-order-completed {
+	background: #edfaef;
+	opacity: 0.75;
+}
+
+.pizzapilot-order-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.pizzapilot-order-card-header h3 {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.pizzapilot-order-card-header h3 a {
+	text-decoration: none;
+}
+
+/* Delivery type badge */
+.pizzapilot-delivery-type {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	padding: 2px 8px;
+	border-radius: 3px;
+	white-space: nowrap;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.pizzapilot-delivery-type--delivery {
+	background: #fcf0e3;
+	color: #9a6700;
+}
+
+.pizzapilot-delivery-type--collection {
+	background: #e7f5fe;
+	color: #0a4b78;
+}
+
+/* Order items list */
+.pizzapilot-order-items {
+	list-style: none;
+	margin: 0 0 15px 0;
+	padding: 10px 0;
+	border-top: 1px solid #f0f0f1;
+	border-bottom: 1px solid #f0f0f1;
+	flex-grow: 1;
+}
+
+.pizzapilot-order-items li {
+	padding: 3px 0;
+	font-size: 13px;
+}
+
+/* Card footer with toggle */
+.pizzapilot-order-card-footer {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.pizzapilot-order-card-footer form {
+	margin: 0;
+}
+
+.pizzapilot-btn-incomplete {
+	color: #b32d2e !important;
+	border-color: #b32d2e !important;
+}
+
+/* Completed card strikethrough on items */
+.pizzapilot-order-completed .pizzapilot-order-items li {
+	text-decoration: line-through;
+	color: #787c82;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+	.pizzapilot-order-cards {
+		grid-template-columns: 1fr;
+	}
+
+	.pizzapilot-slot-heading {
+		font-size: 16px;
+	}
+}

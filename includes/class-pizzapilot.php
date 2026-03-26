@@ -194,6 +194,7 @@ class Pizzapilot {
 		$plugin_kitchen = new PizzaPilot_Kitchen( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_menu', $plugin_kitchen, 'add_kitchen_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_kitchen, 'enqueue_kitchen_styles' );
 		$this->loader->add_action( 'admin_post_pizzapilot_mark_kitchen_completed', $plugin_kitchen, 'handle_mark_completed' );
 
 		// Display PizzaPilot delivery info on order edit page
