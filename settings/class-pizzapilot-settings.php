@@ -286,6 +286,16 @@ class Pizzapilot_Settings {
 			);
 		}
 
+		/**
+		 * Allow Pro plugin to add its own delivery settings fields.
+		 *
+		 * @since 1.0.0
+		 * @param bool   $pro_active    Whether the Pro plugin is active.
+		 * @param string $settings_page The settings page slug.
+		 * @param string $section_id    The section ID.
+		 */
+		do_action( 'pizzapilot_register_pro_delivery_settings', $pro_active, 'pizzapilot-settings-delivery', 'pizzapilot_delivery' );
+
 		// Advanced Settings Tab - Pro features and advanced options
 		add_settings_section( 
 			'pizzapilot_advanced', 
@@ -360,7 +370,16 @@ class Pizzapilot_Settings {
 		} else {
 			$sanitized['delivery_end_time'] = '17:30';
 		}
-		
+
+		/**
+		 * Allow Pro plugin to add its own delivery settings sanitization.
+		 *
+		 * @since 1.0.0
+		 * @param array $sanitized The sanitized array so far.
+		 * @param array $input     The raw input array.
+		 */
+		$sanitized = apply_filters( 'pizzapilot_sanitize_pro_delivery_settings', $sanitized, $input );
+
 		return $sanitized;
 	}
 	

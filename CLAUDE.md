@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Technical Patterns
 
-- **Extensibility via Filters**: `apply_filters('pizzapilot_time_slots', $slots)` used throughout to allow Pro overrides
+- **Extensibility via Filters**: `apply_filters('pizzapilot_time_slots', $slots)` and `apply_filters('pizzapilot_geocode_postcode', null, $postcode)` used throughout to allow Pro overrides
 - **Pro Detection**: `class_exists('PizzaPilot_Pro')` check used to conditionally enable/disable features
 - **Modular Class Loading**: `PizzaPilot\Features\FutureOrderToggle` pattern
 - **WordPress Standards**: Settings API for admin settings, WP hooks and actions
@@ -43,7 +43,10 @@ PIZZAPILOT_PLUGIN_URL    // Plugin URL
 - Admin sets static delivery radius (km or miles)
 - Customer postcode input field validates range
 - If outside range, fallback to "Collection only"
-- Uses **simple Haversine calculation** (no map API required)
+- Uses **postcodes.io** API for geocoding (free, no API key, UK postcodes only)
+- Distance calculated using **Haversine formula** for real-world accuracy
+- Geocoded coordinates are cached via WordPress transients (30 days)
+- Geocoding provider is swappable via `pizzapilot_geocode_postcode` filter (Pro uses Google Maps for global support)
 
 ### 3. Same-Day Ordering Only
 - Customers can only book time slots for **today**
@@ -174,6 +177,7 @@ Example Pro features that should show as disabled:
 - ✅ Manual slot creation (today only)
 - ✅ Unlimited orders per slot
 - ✅ Fixed delivery radius from 1 postcode
+- ✅ Geocoding via postcodes.io (UK postcodes, free, no API key)
 - ✅ Basic kitchen UI with checkboxes
 - ✅ Collection/delivery unified logic
 
@@ -181,6 +185,8 @@ Example Pro features that should show as disabled:
 - ❌ Future dates, auto-generation, recurring logic
 - ❌ Slot capacity limits by order count or pizza quantity
 - ❌ Multiple origins, variable radii, override rules
+- ❌ Global geocoding via Google Maps API (supports any country)
+- ❌ Interactive Mapbox delivery maps (checkout + admin) with What3Words
 - ❌ Live kitchen queue, drag & drop, responsive UI
 - ❌ Driver delivery interface with maps
 - ❌ Separate capacities for collection vs delivery

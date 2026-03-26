@@ -129,6 +129,11 @@ class Pizzapilot {
 		 */
 		require_once PIZZAPILOT_PLUGIN_DIR . 'public/class-pizzapilot-public.php';
 
+		/**
+		 * The class responsible for delivery radius checking and validation.
+		 */
+		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-delivery-checker.php';
+
 		$this->loader = new Pizzapilot_Loader();
 
 	}
@@ -174,11 +179,24 @@ class Pizzapilot {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-		
+
 		$plugin_admin = new Pizzapilot_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		// Display PizzaPilot delivery info on order edit page
+		$this->loader->add_action( 'woocommerce_admin_order_data_after_billing_address', $plugin_admin, 'pizzapilot_display_order_meta' );
+
+		// Hide PizzaPilot fields from default WooCommerce additional fields display
+		$this->loader->add_filter( 'woocommerce_order_data_store_cpt_display_additional_field', $plugin_admin, 'pizzapilot_hide_checkout_field_display', 10, 3 );
+
+		// Add CSS to hide fields as backup
+		$this->loader->add_action( 'admin_head', $plugin_admin, 'pizzapilot_hide_meta_css' );
+
+		// Add PizzaPilot column to orders list
+		$this->loader->add_filter( 'manage_edit-shop_order_columns', $plugin_admin, 'pizzapilot_add_order_column' );
+		$this->loader->add_action( 'manage_shop_order_posts_custom_column', $plugin_admin, 'pizzapilot_order_column_content', 10, 2 );
 
 	}
 
@@ -196,9 +214,23 @@ class Pizzapilot {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
+		// Register checkout fields
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'pizzapilot_register_checkout_fields' );
 
+		// Validate checkout fields
+		$this->loader->add_action( 'woocommerce_checkout_process', $plugin_public, 'pizzapilot_validate_checkout_fields' );
 
+		// Save checkout fields to order meta (for traditional checkout)
+		$this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_public, 'pizzapilot_save_checkout_fields' );
+
+		// Save checkout fields to order meta (for block-based checkout with additional fields API)
+		$this->loader->add_action( 'woocommerce_store_api_checkout_update_order_from_request', $plugin_public, 'pizzapilot_save_checkout_fields_block', 10, 2 );
+
+		// Handle order status changes (cancellations, refunds)
+		$this->loader->add_action( 'woocommerce_order_status_changed', $plugin_public, 'pizzapilot_handle_order_status_change', 10, 4 );
+
+		// Initialize delivery radius checker
+		new Pizzapilot_Delivery_Checker();
 	}
 
 	/**
