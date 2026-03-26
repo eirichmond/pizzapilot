@@ -147,13 +147,19 @@ class PizzaPilot_Kitchen {
 	private function render_order_card( $order ) {
 		$order_id      = $order->get_id();
 		$customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+		$completed     = 'yes' === $order->get_meta( '_pizzapilot_kitchen_completed', true );
 
 		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
 		if ( empty( $delivery_type ) ) {
 			$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
 		}
 
-		echo '<div class="pizzapilot-order-card">';
+		$card_class = 'pizzapilot-order-card';
+		if ( $completed ) {
+			$card_class .= ' pizzapilot-order-completed';
+		}
+
+		echo '<div class="' . esc_attr( $card_class ) . '">';
 
 		echo '<div class="pizzapilot-order-card-header">';
 		echo '<h3>';
@@ -178,7 +184,86 @@ class PizzaPilot_Kitchen {
 		}
 		echo '</ul>';
 
+		echo '<div class="pizzapilot-order-card-footer">';
+		$this->render_completion_toggle( $order_id, $completed );
 		echo '</div>';
+
+		echo '</div>';
+	}
+
+	/**
+	 * Render the completion toggle form for an order.
+	 *
+	 * @since    1.1.0
+	 * @param    int  $order_id     The order ID.
+	 * @param    bool $completed    Whether the order is marked as completed.
+	 * @return   void
+	 */
+	private function render_completion_toggle( $order_id, $completed ) {
+		$action_url = admin_url( 'admin-post.php' );
+
+		echo '<form method="post" action="' . esc_url( $action_url ) . '">';
+		echo '<input type="hidden" name="action" value="pizzapilot_mark_kitchen_completed">';
+		echo '<input type="hidden" name="order_id" value="' . esc_attr( $order_id ) . '">';
+		echo '<input type="hidden" name="completed" value="' . esc_attr( $completed ? 'no' : 'yes' ) . '">';
+		wp_nonce_field( 'pizzapilot_kitchen_toggle_' . $order_id, 'pizzapilot_kitchen_nonce' );
+
+		if ( $completed ) {
+			echo '<button type="submit" class="button pizzapilot-btn-incomplete">';
+			echo esc_html__( 'Mark Incomplete', 'pizzapilot' );
+			echo '</button>';
+		} else {
+			echo '<button type="submit" class="button button-primary pizzapilot-btn-complete">';
+			echo esc_html__( 'Mark Completed', 'pizzapilot' );
+			echo '</button>';
+		}
+
+		echo '</form>';
+	}
+
+	/**
+	 * Handle the mark completed/incomplete form submission.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function handle_mark_completed() {
+		if ( ! isset( $_POST['pizzapilot_kitchen_nonce'], $_POST['order_id'] ) ) {
+			wp_die( esc_html__( 'Invalid request.', 'pizzapilot' ) );
+		}
+
+		$order_id = absint( $_POST['order_id'] );
+
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['pizzapilot_kitchen_nonce'] ) ), 'pizzapilot_kitchen_toggle_' . $order_id ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'pizzapilot' ) );
+		}
+
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			wp_die( esc_html__( 'You do not have permission to perform this action.', 'pizzapilot' ) );
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			wp_die( esc_html__( 'Order not found.', 'pizzapilot' ) );
+		}
+
+		$new_status = isset( $_POST['completed'] ) ? sanitize_text_field( wp_unslash( $_POST['completed'] ) ) : 'no';
+		$new_status = 'yes' === $new_status ? 'yes' : 'no';
+
+		$order->update_meta_data( '_pizzapilot_kitchen_completed', $new_status );
+		$order->save();
+
+		/**
+		 * Fires when an order's kitchen completion status is toggled.
+		 *
+		 * @since 1.1.0
+		 * @param int    $order_id   The order ID.
+		 * @param string $new_status The new completion status ('yes' or 'no').
+		 */
+		do_action( 'pizzapilot_kitchen_order_toggled', $order_id, $new_status );
+
+		wp_safe_redirect( admin_url( 'admin.php?page=pizzapilot-kitchen' ) );
+		exit;
 	}
 
 	/**
