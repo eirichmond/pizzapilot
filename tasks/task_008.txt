@@ -1,0 +1,124 @@
+# Task ID: 8
+# Title: Kitchen Order Interface
+# Status: pending
+# Dependencies: 2, 5
+# Priority: medium
+# Description: Create a basic admin interface for kitchen staff to view and manage orders grouped by time slot.
+# Details:
+1. Create a new admin page for kitchen order management
+   Branch: feature/task-8-kitchen-admin-page
+2. Query orders and group them by time slot
+   Branch: feature/task-8-kitchen-order-queries
+3. Display customer name, order items, and slot time
+   Branch: feature/task-8-kitchen-order-cards
+4. Add toggle to mark orders as completed
+   Branch: feature/task-8-kitchen-completion-toggle
+5. Add kitchen page CSS styling and asset enqueuing
+   Branch: feature/task-8-kitchen-css
+
+```php
+class PizzaPilot_Kitchen_Interface {
+    public function __construct() {
+        add_action('admin_menu', array($this, 'add_kitchen_menu'));
+        add_action('admin_post_mark_order_completed', array($this, 'handle_mark_completed'));
+    }
+    
+    public function add_kitchen_menu() {
+        add_menu_page(
+            'Kitchen Orders',
+            'Kitchen Orders',
+            'edit_shop_orders',
+            'pizzapilot-kitchen',
+            array($this, 'kitchen_page'),
+            'dashicons-food',
+            56
+        );
+    }
+    
+    public function kitchen_page() {
+        global $wpdb;
+        $slots_table = $wpdb->prefix . 'pizzapilot_order_slots';
+        $today = date('Y-m-d');
+        
+        // Get today's slots with orders
+        $slots = $wpdb->get_results($wpdb->prepare(
+            "SELECT s.slot_id, s.start_time, s.end_time, s.order_id 
+            FROM $slots_table s 
+            WHERE s.date = %s AND s.order_id IS NOT NULL 
+            ORDER BY s.start_time ASC",
+            $today
+        ));
+        
+        echo '<div class="wrap">';
+        echo '<h1>Kitchen Orders</h1>';
+        echo '<p>Orders are grouped by time slot. <a href="" class="button">Refresh</a></p>';
+        
+        if (empty($slots)) {
+            echo '<p>No orders for today.</p>';
+        } else {
+            $current_slot = null;
+            
+            foreach ($slots as $slot) {
+                $start = date('g:i A', strtotime($slot->start_time));
+                $end = date('g:i A', strtotime($slot->end_time));
+                
+                if ($current_slot !== "$start - $end") {
+                    if ($current_slot !== null) {
+                        echo '</div>'; // Close previous slot div
+                    }
+                    $current_slot = "$start - $end";
+                    echo "<h2>Time Slot: $current_slot</h2>";
+                    echo '<div class="pizzapilot-slot-orders">';
+                }
+                
+                // Display order details
+                $order = wc_get_order($slot->order_id);
+                if ($order) {
+                    $this->display_order_card($order, $slot->slot_id);
+                }
+            }
+            
+            echo '</div>'; // Close last slot div
+        }
+        
+        echo '</div>'; // Close wrap
+    }
+    
+    private function display_order_card($order, $slot_id) {
+        $order_id = $order->get_id();
+        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+        $completed = get_post_meta($order_id, '_pizzapilot_kitchen_completed', true) === 'yes';
+        
+        echo '<div class="pizzapilot-order-card ' . ($completed ? 'completed' : '') . '">';
+        echo "<h3>Order #$order_id - $customer_name</h3>";
+        
+        echo '<ul class="order-items">';
+        foreach ($order->get_items() as $item) {
+            echo '<li>' . $item->get_quantity() . 'x ' . $item->get_name() . '</li>';
+        }
+        echo '</ul>';
+        
+        echo '<form method="post" action="' . admin_url('admin-post.php') . '">';
+        echo '<input type="hidden" name="action" value="mark_order_completed">';
+        echo '<input type="hidden" name="order_id" value="' . $order_id . '">';
+        echo '<input type="hidden" name="slot_id" value="' . $slot_id . '">';
+        wp_nonce_field('pizzapilot_mark_completed', 'pizzapilot_nonce');
+        echo '<button type="submit" class="button">' . ($completed ? 'Mark Incomplete' : 'Mark Completed') . '</button>';
+        echo '</form>';
+        
+        echo '</div>';
+    }
+    
+    public function handle_mark_completed() {
+        // Handle marking order as completed
+    }
+}
+```
+
+# Test Strategy:
+1. Test viewing orders grouped by time slot
+2. Verify all order details are displayed correctly
+3. Test marking orders as completed/incomplete
+4. Verify manual refresh updates the display
+5. Test with multiple orders in the same time slot
+6. Check permission restrictions work correctly

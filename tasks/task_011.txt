@@ -1,0 +1,103 @@
+# Task ID: 11
+# Title: Plugin Activation and Dependency Checks
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Implement activation hooks to check for WooCommerce dependency and set up initial plugin state.
+# Details:
+1. Check for WooCommerce activation on plugin activation
+   Branch: feature/task-11-woo-dependency-check
+2. Create default settings on first activation
+   Branch: feature/task-11-default-settings
+3. Set up database tables
+   Branch: feature/task-11-db-table-setup
+4. Display admin notices for missing dependencies
+   Branch: feature/task-11-admin-notices
+5. Handle plugin deactivation cleanup
+   Branch: feature/task-11-deactivation-cleanup
+
+```php
+class PizzaPilot_Activation {
+    public static function activate() {
+        // Check if WooCommerce is active
+        if (!class_exists('WooCommerce')) {
+            deactivate_plugins(plugin_basename(__FILE__));
+            wp_die('PizzaPilot requires WooCommerce to be installed and activated. Please install and activate WooCommerce first.');
+        }
+        
+        // Create database tables
+        self::create_tables();
+        
+        // Set default options if not already set
+        if (!get_option('pizzapilot_enabled')) {
+            update_option('pizzapilot_enabled', true);
+        }
+        
+        if (!get_option('pizzapilot_delivery_radius')) {
+            update_option('pizzapilot_delivery_radius', 5);
+        }
+        
+        if (!get_option('pizzapilot_radius_unit')) {
+            update_option('pizzapilot_radius_unit', 'km');
+        }
+        
+        // Set activation flag for admin notices
+        set_transient('pizzapilot_activation_notice', true, 5);
+    }
+    
+    public static function deactivate() {
+        // Clean up if needed
+    }
+    
+    private static function create_tables() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'pizzapilot_order_slots';
+        
+        $sql = "CREATE TABLE $table_name (
+            slot_id bigint(20) NOT NULL AUTO_INCREMENT,
+            date date NOT NULL,
+            start_time time NOT NULL,
+            end_time time NOT NULL,
+            availability int(11) NOT NULL DEFAULT 0,
+            order_id bigint(20) DEFAULT NULL,
+            created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (slot_id),
+            KEY date (date),
+            KEY order_id (order_id)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+    
+    public static function admin_notices() {
+        // If activation transient is set, show welcome message
+        if (get_transient('pizzapilot_activation_notice')) {
+            echo '<div class="updated notice is-dismissible">';
+            echo '<p>Thank you for installing PizzaPilot! Please <a href="' . admin_url('admin.php?page=pizzapilot-settings') . '">configure your settings</a> to get started.</p>';
+            echo '</div>';
+            delete_transient('pizzapilot_activation_notice');
+        }
+        
+        // Check if WooCommerce is active
+        if (!class_exists('WooCommerce')) {
+            echo '<div class="error notice">';
+            echo '<p>PizzaPilot requires WooCommerce to be installed and activated. Please install and activate WooCommerce first.</p>';
+            echo '</div>';
+        }
+    }
+}
+
+// Add admin notices hook
+add_action('admin_notices', array('PizzaPilot_Activation', 'admin_notices'));
+```
+
+# Test Strategy:
+1. Test activation with and without WooCommerce active
+2. Verify database tables are created correctly
+3. Check default settings are applied on first activation
+4. Test admin notices appear appropriately
+5. Verify plugin can be deactivated cleanly
+6. Test activation on both new installations and upgrades

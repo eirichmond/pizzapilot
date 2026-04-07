@@ -1,0 +1,151 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Plugin Initialization and Structure Setup",
+      "description": "Create the basic plugin structure with main file, readme, and directory organization following WordPress plugin standards.",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [],
+      "completionNotes": "Main plugin file, loader, i18n, activator/deactivator, helpers, admin/public/settings classes all in place. Proper constants, hooks, and directory structure."
+    },
+    {
+      "id": 2,
+      "title": "Database Schema Creation",
+      "description": "Create the pizzapilot_order_slots database table for storing time slot information.",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [1],
+      "completionNotes": "wp_pizzapilot_order_slots table created via dbDelta on activation. Schema: slot_id, date, start_time, end_time, availability, order_id, created_at, updated_at with proper indexes."
+    },
+    {
+      "id": 3,
+      "title": "Admin Settings Panel",
+      "description": "Create a tabbed admin settings page with General, Delivery, and Advanced tabs using WordPress Settings API.",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [1],
+      "completionNotes": "3-tab settings page (General, Delivery, Advanced). Enable toggle, delivery postcode/radius/unit, start/end times. Pro extensibility via hooks (pizzapilot_settings_tabs, pizzapilot_settings_sections, pizzapilot_register_pro_settings, etc.)."
+    },
+    {
+      "id": 4,
+      "title": "Time Slot Management Interface",
+      "description": "Admin page for CRUD operations on delivery time slots.",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [2, 3],
+      "notes": "Currently only available via Pro's Order Slots tab. Free version needs its own basic slot management UI for creating same-day slots."
+    },
+    {
+      "id": 5,
+      "title": "Time Slot Selection at Checkout",
+      "description": "Implement time slot selection on WooCommerce checkout (both classic and block checkout).",
+      "status": "completed",
+      "priority": "high",
+      "dependencies": [2, 3],
+      "completionNotes": "Registered via woocommerce_register_additional_checkout_field. Supports both classic and WC Blocks checkout. Delivery type (delivery/collect) + delivery time select. Validation includes elapsed slot check (20-min cutoff). Order meta saved to both WC additional fields and legacy meta keys."
+    },
+    {
+      "id": 6,
+      "title": "Pizza Quantity Deduction Logic",
+      "description": "Count items in order and deduct from slot availability.",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [2, 5],
+      "completionNotes": "Free version provides count_order_items() with pizzapilot_order_item_count filter. Pro's Pizzapilot_Pro_Capacity hooks into this for per_order/per_category countdown modes. Seat-based booking via pizzapilot_slot_booked action. Double-booking guard (_pizzapilot_slot_booking_processed meta flag) prevents both classic+block hooks from double-firing."
+    },
+    {
+      "id": 7,
+      "title": "Basic Delivery Radius Checker",
+      "description": "Validate customer postcodes against delivery radius using geocoding.",
+      "status": "completed",
+      "priority": "medium",
+      "dependencies": [3],
+      "completionNotes": "Pizzapilot_Delivery_Checker class with Haversine distance calculation. postcodes.io geocoding (UK, free). AJAX endpoint for real-time validation. 30-day transient caching. Extensible via pizzapilot_geocode_postcode filter (Pro overrides with Google Maps). Both classic and block checkout validation."
+    },
+    {
+      "id": 8,
+      "title": "Kitchen Order Interface",
+      "description": "Admin dashboard showing orders grouped by time slot with completion checkboxes.",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": [2, 5],
+      "notes": "Not implemented in either free or pro version. Requires admin page, order grouping by slot, completion toggles, and refresh functionality."
+    },
+    {
+      "id": 9,
+      "title": "WooCommerce Integration",
+      "description": "Display time slot info in order admin, emails, and customer views.",
+      "status": "in_progress",
+      "priority": "medium",
+      "dependencies": [5, 6],
+      "completionNotes": "Order meta box on edit page showing delivery type + time. Custom 'Delivery Slot' column in orders list. Order status change handling (fires pizzapilot_slot_released on cancel/refund).",
+      "remaining": "Email integration (slot info in order confirmation emails). Customer-facing order view display."
+    },
+    {
+      "id": 10,
+      "title": "Pro Feature Teasers",
+      "description": "Show disabled Pro features with upgrade prompts in free version UI.",
+      "status": "in_progress",
+      "priority": "low",
+      "dependencies": [3, 4, 8],
+      "completionNotes": "Same-day toggle shown disabled with Pro upsell link. Helpers::pizzapilot_is_pro_active() detection. Extensive Pro hooks for settings, delivery, slots, item counting.",
+      "remaining": "Visual badges/colors for Pro features. Kitchen UI teaser. Map feature teasers. Dedicated upgrade page."
+    },
+    {
+      "id": 11,
+      "title": "Plugin Activation and Dependency Checks",
+      "description": "Activation hooks for table creation, dependency checking, and default settings.",
+      "status": "in_progress",
+      "priority": "high",
+      "dependencies": [1],
+      "completionNotes": "register_activation_hook creates DB table. register_deactivation_hook placeholder. uninstall.php exists.",
+      "remaining": "WooCommerce dependency check on activation. Version migration/upgrade logic. Admin notices for missing dependencies."
+    },
+    {
+      "id": 12,
+      "title": "Frontend Assets and Styling",
+      "description": "CSS and JavaScript assets for checkout and admin interfaces.",
+      "status": "in_progress",
+      "priority": "medium",
+      "dependencies": [1],
+      "completionNotes": "Public JS fully functional (postcode checker with AJAX, debouncing, message display, WC Blocks support). Assets properly enqueued and localized.",
+      "remaining": "Admin CSS (empty template). Public CSS (empty template). Responsive/accessibility considerations."
+    },
+    {
+      "id": 13,
+      "title": "Order Display in WooCommerce Admin",
+      "description": "Enhanced order list with slot column and filtering.",
+      "status": "in_progress",
+      "priority": "low",
+      "dependencies": [5, 9],
+      "completionNotes": "Custom meta box on order edit page. Delivery Slot column in orders list with shorthand time format.",
+      "remaining": "Filtering orders by time slot. Quick view on hover."
+    },
+    {
+      "id": 14,
+      "title": "Internationalization and Localization",
+      "description": "Prepare plugin for translation with proper text domain usage.",
+      "status": "completed",
+      "priority": "low",
+      "dependencies": [1],
+      "completionNotes": "Text domain 'pizzapilot' throughout. Pizzapilot_i18n class loads text domain. All strings wrapped with __(), esc_html__(), etc. POT template file exists in languages/."
+    },
+    {
+      "id": 15,
+      "title": "Documentation and Help Resources",
+      "description": "Contextual help tabs, tooltips, and getting started guide.",
+      "status": "pending",
+      "priority": "low",
+      "dependencies": [3, 4, 8],
+      "notes": "No contextual help tabs, tooltips, or inline documentation built yet."
+    }
+  ],
+  "lastUpdated": "2026-03-17",
+  "summary": {
+    "completed": 7,
+    "in_progress": 5,
+    "pending": 3,
+    "total": 15
+  }
+}
