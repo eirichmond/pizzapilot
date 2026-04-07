@@ -27,10 +27,10 @@
     {
       "id": 4,
       "title": "Time Slot Management Interface",
-      "status": "pending",
-      "priority": "high",
+      "status": "deferred_to_pro",
+      "priority": "n/a",
       "dependencies": [2, 3],
-      "notes": "Free version needs its own basic slot management UI for creating same-day slots. No code exists yet."
+      "notes": "Free version uses auto-generated slots from start/end time settings. Manual slot CRUD, future dates, recurring slots, and capacity controls are Pro features."
     },
     {
       "id": 5,
@@ -67,11 +67,10 @@
     {
       "id": 9,
       "title": "WooCommerce Integration",
-      "status": "in_progress",
+      "status": "completed",
       "priority": "medium",
       "dependencies": [5, 6],
-      "completionNotes": "Order meta box on edit page showing delivery type + time. Custom 'Delivery Slot' column in orders list. Order status change handling (fires pizzapilot_slot_released on cancel/refund).",
-      "remaining": "Email integration (slot info in order confirmation emails). Customer-facing order view display. HPOS compatibility (declare_compatibility + replace update_post_meta calls). HPOS order list column hooks."
+      "completionNotes": "Order meta box on edit page. Delivery Slot column in orders list (CPT + HPOS hooks). Order status change handling. HPOS declared compatible via FeaturesUtil. All post_meta calls replaced with HPOS-safe order methods. Emails and customer order view handled automatically by WC additional checkout fields API. error_log() calls removed."
     },
     {
       "id": 10,
@@ -80,7 +79,7 @@
       "priority": "low",
       "dependencies": [3, 4, 8],
       "completionNotes": "Same-day toggle shown disabled with Pro upsell link. Helpers::pizzapilot_is_pro_active() detection. Extensive Pro hooks for settings, delivery, slots, item counting.",
-      "remaining": "PRO badges on disabled slot capacity fields. Kitchen page Pro upsell banner. Slot date picker Pro upsell. Dedicated upgrade page."
+      "remaining": "Kitchen page Pro upsell banner."
     },
     {
       "id": 11,
@@ -103,11 +102,10 @@
     {
       "id": 13,
       "title": "Order Display in WooCommerce Admin",
-      "status": "in_progress",
+      "status": "completed",
       "priority": "low",
       "dependencies": [5, 9],
-      "completionNotes": "Custom meta box on order edit page. Delivery Slot column in orders list (CPT hooks only).",
-      "remaining": "HPOS order list column hooks. Filtering orders by time slot."
+      "completionNotes": "Custom meta box on order edit page. Delivery Slot column with CPT and HPOS hooks. Shared render_delivery_column() method for both storage backends."
     },
     {
       "id": 14,
@@ -123,15 +121,16 @@
       "title": "Documentation and Help Resources",
       "status": "pending",
       "priority": "low",
-      "dependencies": [3, 4, 8],
+      "dependencies": [3, 8],
       "notes": "No contextual help tabs, tooltips, or inline documentation built yet."
     }
   ],
   "lastUpdated": "2026-04-07",
   "summary": {
-    "completed": 7,
-    "in_progress": 6,
-    "pending": 2,
+    "completed": 9,
+    "in_progress": 4,
+    "pending": 1,
+    "deferred_to_pro": 1,
     "total": 15
   }
 }
