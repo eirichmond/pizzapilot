@@ -1,0 +1,94 @@
+# Task ID: 9
+# Title: WooCommerce Integration
+# Status: pending
+# Dependencies: 5, 6
+# Priority: medium
+# Description: Integrate with WooCommerce to display time slot information in order details and ensure compatibility with standard WooCommerce flows.
+# Details:
+1. Add time slot information to order emails
+   Branch: feature/task-9-woo-slot-emails
+2. Display slot info in admin order details
+   Branch: feature/task-9-woo-admin-order-display
+3. Add slot info to customer order view
+   Branch: feature/task-9-woo-customer-order-view
+4. Ensure compatibility with WooCommerce order statuses
+   Branch: feature/task-9-woo-status-compatibility
+5. Handle order cancellation and slot availability
+   Branch: feature/task-9-woo-cancellation-release
+
+```php
+class PizzaPilot_WooCommerce_Integration {
+    public function __construct() {
+        add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'display_slot_in_admin_order'));
+        add_action('woocommerce_email_after_order_table', array($this, 'add_slot_to_emails'), 10, 4);
+        add_action('woocommerce_order_details_after_order_table', array($this, 'add_slot_to_order_details'));
+    }
+    
+    public function display_slot_in_admin_order($order) {
+        $slot_id = get_post_meta($order->get_id(), '_pizzapilot_time_slot_id', true);
+        if (!$slot_id) return;
+        
+        $slot_info = $this->get_slot_info($slot_id);
+        if (!$slot_info) return;
+        
+        echo '<p><strong>Delivery Time Slot:</strong> ';
+        echo date('F j, Y', strtotime($slot_info->date)) . ', ';
+        echo date('g:i A', strtotime($slot_info->start_time)) . ' - ' . date('g:i A', strtotime($slot_info->end_time));
+        echo '</p>';
+    }
+    
+    public function add_slot_to_emails($order, $sent_to_admin, $plain_text, $email) {
+        $slot_id = get_post_meta($order->get_id(), '_pizzapilot_time_slot_id', true);
+        if (!$slot_id) return;
+        
+        $slot_info = $this->get_slot_info($slot_id);
+        if (!$slot_info) return;
+        
+        if ($plain_text) {
+            echo "\n\nDelivery Time Slot:\n";
+            echo date('F j, Y', strtotime($slot_info->date)) . ', ';
+            echo date('g:i A', strtotime($slot_info->start_time)) . ' - ' . date('g:i A', strtotime($slot_info->end_time));
+        } else {
+            echo '<h2>Delivery Time Slot</h2>';
+            echo '<p>';
+            echo date('F j, Y', strtotime($slot_info->date)) . ', ';
+            echo date('g:i A', strtotime($slot_info->start_time)) . ' - ' . date('g:i A', strtotime($slot_info->end_time));
+            echo '</p>';
+        }
+    }
+    
+    public function add_slot_to_order_details($order) {
+        $slot_id = get_post_meta($order->get_id(), '_pizzapilot_time_slot_id', true);
+        if (!$slot_id) return;
+        
+        $slot_info = $this->get_slot_info($slot_id);
+        if (!$slot_info) return;
+        
+        echo '<section class="woocommerce-delivery-slot">';
+        echo '<h2>Delivery Time Slot</h2>';
+        echo '<p>';
+        echo date('F j, Y', strtotime($slot_info->date)) . ', ';
+        echo date('g:i A', strtotime($slot_info->start_time)) . ' - ' . date('g:i A', strtotime($slot_info->end_time));
+        echo '</p>';
+        echo '</section>';
+    }
+    
+    private function get_slot_info($slot_id) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pizzapilot_order_slots';
+        
+        return $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $table_name WHERE slot_id = %d",
+            $slot_id
+        ));
+    }
+}
+```
+
+# Test Strategy:
+1. Verify time slot information appears in admin order details
+2. Test order emails include slot information
+3. Check customer order view displays slot details
+4. Test order cancellation properly releases slot
+5. Verify compatibility with different WooCommerce themes
+6. Test with various order statuses to ensure consistent behavior

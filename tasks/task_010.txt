@@ -1,0 +1,104 @@
+# Task ID: 10
+# Title: Pro Feature Teasers
+# Status: pending
+# Dependencies: 3, 4, 8
+# Priority: low
+# Description: Implement UI elements that showcase Pro features but are disabled in the free version, with appropriate upgrade prompts.
+# Details:
+1. Add disabled toggles for Pro features in settings
+   Branch: feature/task-10-pro-disabled-toggles
+2. Create tooltips explaining Pro benefits
+   Branch: feature/task-10-pro-benefit-tooltips
+3. Add upgrade buttons/links throughout the interface
+   Branch: feature/task-10-pro-upgrade-links
+4. Implement greyed-out UI elements for Pro features
+   Branch: feature/task-10-pro-greyed-ui
+5. Create a dedicated "Upgrade to Pro" page
+   Branch: feature/task-10-pro-upgrade-page
+
+```php
+class PizzaPilot_Pro_Teasers {
+    public function __construct() {
+        add_action('admin_menu', array($this, 'add_upgrade_menu'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_teaser_assets'));
+        add_action('pizzapilot_after_settings', array($this, 'add_pro_settings_teasers'));
+    }
+    
+    public function add_upgrade_menu() {
+        add_submenu_page(
+            'woocommerce',
+            'Upgrade to Pro',
+            '<span class="pizzapilot-upgrade-link">Upgrade to Pro</span>',
+            'manage_options',
+            'pizzapilot-upgrade',
+            array($this, 'upgrade_page')
+        );
+    }
+    
+    public function enqueue_teaser_assets($hook) {
+        if (strpos($hook, 'pizzapilot') !== false) {
+            wp_enqueue_style('pizzapilot-teasers', PIZZAPILOT_PLUGIN_URL . 'assets/css/teasers.css');
+            wp_enqueue_script('pizzapilot-teasers', PIZZAPILOT_PLUGIN_URL . 'assets/js/teasers.js', array('jquery'), PIZZAPILOT_VERSION, true);
+        }
+    }
+    
+    public function add_pro_settings_teasers() {
+        echo '<div class="pizzapilot-pro-features">';
+        echo '<h2>Pro Features (Upgrade Required)</h2>';
+        
+        echo '<div class="pizzapilot-pro-feature">';
+        echo '<label class="pizzapilot-toggle disabled">';
+        echo '<input type="checkbox" disabled>';
+        echo '<span class="slider"></span>';
+        echo '</label>';
+        echo '<span>Future Date Selection</span>';
+        echo '<span class="pizzapilot-pro-badge">PRO</span>';
+        echo '<p class="description">Allow customers to select delivery dates up to 14 days in advance.</p>';
+        echo '</div>';
+        
+        // Add more pro features...
+        
+        echo '<a href="' . admin_url('admin.php?page=pizzapilot-upgrade') . '" class="button button-primary">Upgrade to PizzaPilot Pro</a>';
+        echo '</div>';
+    }
+    
+    public function upgrade_page() {
+        echo '<div class="wrap pizzapilot-upgrade-page">';
+        echo '<h1>Upgrade to PizzaPilot Pro</h1>';
+        
+        echo '<div class="pizzapilot-pro-benefits">';
+        echo '<div class="pizzapilot-pro-column">';
+        echo '<h2>Pro Features</h2>';
+        echo '<ul>';
+        echo '<li>Future date selection & multi-day scheduling</li>';
+        echo '<li>Auto-generated recurring time slots</li>';
+        echo '<li>Drag-and-drop kitchen UI with live updates</li>';
+        echo '<li>Geolocation or Google/Apple Maps API</li>';
+        echo '<li>Customer notifications</li>';
+        echo '<li>Delivery route optimization</li>';
+        echo '<li>Per-product prep weight for slot deduction</li>';
+        echo '</ul>';
+        echo '</div>';
+        
+        echo '<div class="pizzapilot-pro-column">';
+        echo '<h2>Pricing</h2>';
+        echo '<div class="pizzapilot-price-box">';
+        echo '<h3>PizzaPilot Pro</h3>';
+        echo '<div class="pizzapilot-price">$99/year</div>';
+        echo '<a href="https://example.com/pizzapilot-pro" class="button button-primary button-large">Upgrade Now</a>';
+        echo '</div>';
+        echo '</div>';
+        echo '</div>';
+        
+        echo '</div>';
+    }
+}
+```
+
+# Test Strategy:
+1. Verify disabled Pro features are clearly marked
+2. Test tooltips display correctly on hover
+3. Check upgrade links direct to the correct page
+4. Verify styling of disabled elements is consistent
+5. Test responsive design of upgrade page
+6. Ensure upgrade prompts are noticeable but not intrusive

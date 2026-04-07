@@ -1,0 +1,82 @@
+# Task ID: 5
+# Title: Time Slot Selection at Checkout
+# Status: pending
+# Dependencies: 2, 3
+# Priority: high
+# Description: Implement the time slot selection dropdown at the WooCommerce checkout page, showing only available slots for the current day.
+# Details:
+1. Add a custom field to the WooCommerce checkout form
+2. Query database for available time slots for the current day
+3. Display slots in a dropdown, showing time range
+4. Validate selection before order completion
+5. Store selected slot as order meta
+
+```php
+class PizzaPilot_Checkout {
+    public function __construct() {
+        add_action('woocommerce_before_order_notes', array($this, 'add_time_slot_field'));
+        add_action('woocommerce_checkout_process', array($this, 'validate_time_slot'));
+        add_action('woocommerce_checkout_update_order_meta', array($this, 'save_time_slot_data'));
+    }
+    
+    public function add_time_slot_field($checkout) {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'pizzapilot_order_slots';
+        
+        // Get today's date in Y-m-d format
+        $today = date('Y-m-d');
+        
+        // Get available slots
+        $slots = $wpdb->get_results($wpdb->prepare(
+            "SELECT slot_id, start_time, end_time, availability 
+            FROM $table_name 
+            WHERE date = %s AND availability > 0 
+            ORDER BY start_time ASC",
+            $today
+        ));
+        
+        $options = array('' => 'Select a delivery time');
+        
+        foreach ($slots as $slot) {
+            $start = date('g:i A', strtotime($slot->start_time));
+            $end = date('g:i A', strtotime($slot->end_time));
+            $options[$slot->slot_id] = "$start - $end";
+        }
+        
+        woocommerce_form_field('pizzapilot_time_slot', array(
+            'type' => 'select',
+            'class' => array('pizzapilot-time-slot form-row-wide'),
+            'label' => 'Delivery Time Slot',
+            'required' => true,
+            'options' => $options,
+        ), $checkout->get_value('pizzapilot_time_slot'));
+    }
+    
+    public function validate_time_slot() {
+        if (empty($_POST['pizzapilot_time_slot'])) {
+            wc_add_notice('Please select a delivery time slot', 'error');
+        }
+    }
+    
+    public function save_time_slot_data($order_id) {
+        if (isset($_POST['pizzapilot_time_slot']) && !empty($_POST['pizzapilot_time_slot'])) {
+            $slot_id = sanitize_text_field($_POST['pizzapilot_time_slot']);
+            update_post_meta($order_id, '_pizzapilot_time_slot_id', $slot_id);
+            
+            // Update slot availability
+            $this->update_slot_availability($slot_id, $order_id);
+        }
+    }
+    
+    private function update_slot_availability($slot_id, $order_id) {
+        // Implement slot availability update logic
+    }
+}
+```
+
+# Test Strategy:
+1. Test checkout page loads with time slot dropdown
+2. Verify only available slots for current day are shown
+3. Test validation prevents checkout without selecting a slot
+4. Verify selected slot is saved with order
+5. Test edge cases: no available slots, last slot being taken during checkout
