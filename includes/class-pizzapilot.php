@@ -206,9 +206,13 @@ class Pizzapilot {
 		// Add CSS to hide fields as backup
 		$this->loader->add_action( 'admin_head', $plugin_admin, 'pizzapilot_hide_meta_css' );
 
-		// Add PizzaPilot column to orders list
+		// Add PizzaPilot column to orders list (CPT storage)
 		$this->loader->add_filter( 'manage_edit-shop_order_columns', $plugin_admin, 'pizzapilot_add_order_column' );
 		$this->loader->add_action( 'manage_shop_order_posts_custom_column', $plugin_admin, 'pizzapilot_order_column_content', 10, 2 );
+
+		// Add PizzaPilot column to orders list (HPOS storage)
+		$this->loader->add_filter( 'manage_woocommerce_page_wc-orders_columns', $plugin_admin, 'pizzapilot_add_order_column' );
+		$this->loader->add_action( 'manage_woocommerce_page_wc-orders_custom_column', $plugin_admin, 'pizzapilot_order_column_content_hpos', 10, 2 );
 
 	}
 
