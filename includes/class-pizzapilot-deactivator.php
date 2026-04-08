@@ -23,14 +23,17 @@
 class Pizzapilot_Deactivator {
 
 	/**
-	 * Short Description. (use period)
+	 * Run deactivation tasks for PizzaPilot.
 	 *
-	 * Long Description.
+	 * Deactivation does not remove data. Full cleanup (deleting options,
+	 * dropping the database table, clearing transients) happens in
+	 * uninstall.php when the plugin is deleted via the WordPress admin.
 	 *
 	 * @since    1.0.0
+	 * @return   void
 	 */
 	public static function deactivate() {
-
+		// Intentionally empty — cleanup happens in uninstall.php.
 	}
 
 }
