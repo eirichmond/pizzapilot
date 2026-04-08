@@ -39,7 +39,12 @@ class Pizzapilot_Helpers {
      * @param    string    $message    The message to display.
      * @return   string               The formatted upgrade message.
      */
-    public static function pizzapilot_pro_upgrade_message( ) {
-        return 'Upgrade to <a href="https://pizzapilot.co.uk/pricing/">Pro version of PizzaPilot.</a> for more advanced features.';
+    public static function pizzapilot_pro_upgrade_message() {
+        return sprintf(
+            /* translators: %s: opening and closing anchor tags for the upgrade link */
+            __( 'Upgrade to %1$sPizzaPilot Pro%2$s for more advanced features.', 'pizzapilot' ),
+            '<a href="https://pizzapilot.co.uk/pricing/">',
+            '</a>'
+        );
     }
 } 

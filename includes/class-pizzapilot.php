@@ -129,6 +129,11 @@ class Pizzapilot {
 		require_once PIZZAPILOT_PLUGIN_DIR . 'admin/class-pizzapilot-kitchen.php';
 
 		/**
+		 * The class responsible for Pro feature teasers and upgrade page.
+		 */
+		require_once PIZZAPILOT_PLUGIN_DIR . 'admin/class-pizzapilot-pro-teasers.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
@@ -173,6 +178,7 @@ class Pizzapilot {
 
 		$this->loader->add_action( 'admin_menu', $plugin_settings, 'ppilot_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_settings, 'ppilot_register_settings' );
+		$this->loader->add_action( 'admin_head', $plugin_settings, 'add_settings_help_tabs' );
 
 	}
 
@@ -198,8 +204,15 @@ class Pizzapilot {
 
 		$this->loader->add_action( 'admin_menu', $plugin_kitchen, 'add_kitchen_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_kitchen, 'enqueue_kitchen_styles' );
+		$this->loader->add_action( 'admin_head', $plugin_kitchen, 'add_kitchen_help_tab' );
 		$this->loader->add_action( 'admin_post_pizzapilot_mark_kitchen_completed', $plugin_kitchen, 'handle_mark_completed' );
 		$this->loader->add_action( 'admin_action_pizzapilot_dismiss_kitchen_pro', $plugin_kitchen, 'handle_dismiss_kitchen_pro' );
+
+		// Pro feature teasers and upgrade page.
+		$plugin_pro_teasers = new PizzaPilot_Pro_Teasers( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_menu', $plugin_pro_teasers, 'add_upgrade_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_pro_teasers, 'enqueue_upgrade_styles' );
 
 		// Display PizzaPilot delivery info on order edit page
 		$this->loader->add_action( 'woocommerce_admin_order_data_after_billing_address', $plugin_admin, 'pizzapilot_display_order_meta' );
