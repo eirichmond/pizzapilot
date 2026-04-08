@@ -277,7 +277,7 @@ class Pizzapilot_Admin {
 	}
 
 	/**
-	 * Populate PizzaPilot column content in orders list.
+	 * Populate PizzaPilot column content in orders list (CPT storage).
 	 *
 	 * Displays delivery type and time in the custom column.
 	 *
@@ -292,7 +292,39 @@ class Pizzapilot_Admin {
 		}
 
 		$order = wc_get_order( $post_id );
+		$this->render_delivery_column( $order );
+	}
 
+	/**
+	 * Populate PizzaPilot column content in orders list (HPOS storage).
+	 *
+	 * Displays delivery type and time in the custom column for
+	 * WooCommerce High-Performance Order Storage.
+	 *
+	 * @since    1.1.0
+	 * @param    string    $column    Column name.
+	 * @param    WC_Order  $order     The order object.
+	 * @return   void
+	 */
+	public function pizzapilot_order_column_content_hpos( $column, $order ) {
+		if ( $column !== 'pizzapilot_delivery' ) {
+			return;
+		}
+
+		$this->render_delivery_column( $order );
+	}
+
+	/**
+	 * Render the delivery slot column content for an order.
+	 *
+	 * Shared rendering logic used by both CPT and HPOS column callbacks.
+	 *
+	 * @since    1.1.0
+	 * @access   private
+	 * @param    WC_Order|false    $order    The order object or false.
+	 * @return   void
+	 */
+	private function render_delivery_column( $order ) {
 		if ( ! $order ) {
 			echo '—';
 			return;
@@ -332,6 +364,28 @@ class Pizzapilot_Admin {
 		);
 
 		echo wp_kses_post( $display );
+	}
+
+	/**
+	 * Add action links to the plugins list page.
+	 *
+	 * Adds Settings and Upgrade to Pro links next to the plugin name
+	 * on the WordPress Plugins page.
+	 *
+	 * @since    1.1.0
+	 * @param    array $links    Existing plugin action links.
+	 * @return   array           Modified links array.
+	 */
+	public function pizzapilot_plugin_action_links( $links ) {
+		$plugin_links = array(
+			'<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-settings' ) ) . '">' . esc_html__( 'Settings', 'pizzapilot' ) . '</a>',
+		);
+
+		if ( ! Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' ) ) {
+			$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-upgrade' ) ) . '" style="color: #f0b849; font-weight: 600;">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</a>';
+		}
+
+		return array_merge( $plugin_links, $links );
 	}
 
 }

@@ -211,31 +211,36 @@ class Pizzapilot_Public {
 	 * @return   void
 	 */
 	public function pizzapilot_save_checkout_fields( $order_id ) {
-		// Debug logging
-		error_log( 'PizzaPilot: pizzapilot_save_checkout_fields (traditional) called for order ' . $order_id );
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
 
 		// Get the posted data
 		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( $_POST['pizzapilot/delivery-type'] ) : '';
 		$delivery_time = isset( $_POST['pizzapilot/delivery-time'] ) ? absint( $_POST['pizzapilot/delivery-time'] ) : 0;
 
-		error_log( 'PizzaPilot: Traditional checkout - Delivery type: ' . $delivery_type . ', Delivery time: ' . $delivery_time );
-
-		// Save to order meta
+		// Save to order meta (HPOS-safe)
 		if ( ! empty( $delivery_type ) ) {
-			update_post_meta( $order_id, '_pizzapilot_delivery_type', $delivery_type );
+			$order->update_meta_data( '_pizzapilot_delivery_type', $delivery_type );
 		}
 
 		if ( ! empty( $delivery_time ) ) {
-			update_post_meta( $order_id, '_pizzapilot_delivery_time', $delivery_time );
+			$order->update_meta_data( '_pizzapilot_delivery_time', $delivery_time );
 
 			// Get the formatted slot label for display
 			$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 			$available_slots = $settings->get_formatted_delivery_slots();
 
 			if ( isset( $available_slots[ $delivery_time ] ) ) {
-				update_post_meta( $order_id, '_pizzapilot_delivery_time_formatted', $available_slots[ $delivery_time ] );
+				$order->update_meta_data( '_pizzapilot_delivery_time_formatted', $available_slots[ $delivery_time ] );
 			}
+		}
 
+		$order->save();
+
+		if ( ! empty( $delivery_time ) ) {
 			// Update slot availability
 			$this->update_slot_availability( $delivery_time, $order_id );
 		}
@@ -257,31 +262,30 @@ class Pizzapilot_Public {
 		// Get order ID
 		$order_id = $order->get_id();
 
-		// Debug logging
-		error_log( 'PizzaPilot: pizzapilot_save_checkout_fields_block called for order ' . $order_id );
-
 		// Get the field values from order meta (already saved by WooCommerce)
 		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
 		$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
 
-		error_log( 'PizzaPilot: Delivery type: ' . $delivery_type . ', Delivery time: ' . $delivery_time );
-
-		// Also save to legacy meta keys for backward compatibility
+		// Also save to legacy meta keys for backward compatibility (HPOS-safe)
 		if ( ! empty( $delivery_type ) ) {
-			update_post_meta( $order_id, '_pizzapilot_delivery_type', $delivery_type );
+			$order->update_meta_data( '_pizzapilot_delivery_type', $delivery_type );
 		}
 
 		if ( ! empty( $delivery_time ) ) {
-			update_post_meta( $order_id, '_pizzapilot_delivery_time', $delivery_time );
+			$order->update_meta_data( '_pizzapilot_delivery_time', $delivery_time );
 
 			// Get the formatted slot label for display
 			$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 			$available_slots = $settings->get_formatted_delivery_slots();
 
 			if ( isset( $available_slots[ $delivery_time ] ) ) {
-				update_post_meta( $order_id, '_pizzapilot_delivery_time_formatted', $available_slots[ $delivery_time ] );
+				$order->update_meta_data( '_pizzapilot_delivery_time_formatted', $available_slots[ $delivery_time ] );
 			}
+		}
 
+		$order->save();
+
+		if ( ! empty( $delivery_time ) ) {
 			// Update slot availability
 			$this->update_slot_availability( $delivery_time, $order_id );
 		}
@@ -299,18 +303,25 @@ class Pizzapilot_Public {
 	 * @return   void
 	 */
 	private function update_slot_availability( $timestamp, $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
+
 		// Prevent double-processing when both classic and block checkout hooks fire.
-		$already_processed = get_post_meta( $order_id, '_pizzapilot_slot_booking_processed', true );
+		$already_processed = $order->get_meta( '_pizzapilot_slot_booking_processed', true );
 		if ( $already_processed ) {
 			return;
 		}
-		update_post_meta( $order_id, '_pizzapilot_slot_booking_processed', '1' );
+		$order->update_meta_data( '_pizzapilot_slot_booking_processed', '1' );
 
 		// Count items in order (for Pro version capacity tracking)
 		$item_count = $this->count_order_items( $order_id );
 
 		// Store item count in order meta for Pro version
-		update_post_meta( $order_id, '_pizzapilot_item_count', $item_count );
+		$order->update_meta_data( '_pizzapilot_item_count', $item_count );
+		$order->save();
 
 		/**
 		 * Allow Pro version to add capacity checking logic.
@@ -389,11 +400,17 @@ class Pizzapilot_Public {
 	 * @return   void
 	 */
 	private function release_order_slot( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			return;
+		}
+
 		// Get the delivery time for this order
-		$delivery_time = get_post_meta( $order_id, '_wc_other/pizzapilot/delivery-time', true );
+		$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
 
 		if ( empty( $delivery_time ) ) {
-			$delivery_time = get_post_meta( $order_id, '_pizzapilot_delivery_time', true );
+			$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
 		}
 
 		if ( empty( $delivery_time ) ) {
@@ -409,7 +426,6 @@ class Pizzapilot_Public {
 		 * @param int $order_id      The order ID being cancelled.
 		 * @param int $delivery_time The slot timestamp.
 		 */
-		error_log( 'PizzaPilot: Firing pizzapilot_slot_released action for order ' . $order_id );
 		do_action( 'pizzapilot_slot_released', $order_id, $delivery_time );
 	}
 
