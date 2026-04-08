@@ -190,6 +190,9 @@ class Pizzapilot {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Plugin action links on Plugins page.
+		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( PIZZAPILOT_PLUGIN_DIR . 'pizzapilot.php' ), $plugin_admin, 'pizzapilot_plugin_action_links' );
+
 		// Kitchen order interface.
 		$plugin_kitchen = new PizzaPilot_Kitchen( $this->get_plugin_name(), $this->get_version() );
 

@@ -62,28 +62,6 @@ function deactivate_pizzapilot() {
 register_activation_hook( __FILE__, 'activate_pizzapilot' );
 register_deactivation_hook( __FILE__, 'deactivate_pizzapilot' );
 
-/**
- * Add action links to the plugins list page.
- *
- * Adds Settings and Upgrade links next to the plugin name.
- *
- * @since    1.1.0
- * @param    array $links    Existing plugin action links.
- * @return   array           Modified links array.
- */
-function pizzapilot_plugin_action_links( $links ) {
-	$plugin_links = array(
-		'<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-settings' ) ) . '">' . esc_html__( 'Settings', 'pizzapilot' ) . '</a>',
-	);
-
-	if ( ! class_exists( 'Pizzapilot_Pro' ) ) {
-		$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-upgrade' ) ) . '" style="color: #f0b849; font-weight: 600;">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</a>';
-	}
-
-	return array_merge( $plugin_links, $links );
-}
-add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'pizzapilot_plugin_action_links' );
-
 require PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-helpers.php';
 
 /**
