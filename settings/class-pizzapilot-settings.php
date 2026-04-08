@@ -92,6 +92,58 @@ class Pizzapilot_Settings {
 	}
 
 	/**
+	 * Add contextual help tabs to the PizzaPilot settings page.
+	 *
+	 * Provides guidance for each settings tab (General, Delivery, Advanced)
+	 * via the WordPress Help dropdown at the top of the screen.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function add_settings_help_tabs() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || 'toplevel_page_pizzapilot-settings' !== $screen->id ) {
+			return;
+		}
+
+		$screen->add_help_tab(
+			array(
+				'id'      => 'pizzapilot-help-general',
+				'title'   => __( 'General', 'pizzapilot' ),
+				'content' => '<p>' . __( 'The General tab lets you enable or disable PizzaPilot. When disabled, the time slot selector and delivery radius checker will not appear at checkout.', 'pizzapilot' ) . '</p>',
+			)
+		);
+
+		$screen->add_help_tab(
+			array(
+				'id'      => 'pizzapilot-help-delivery',
+				'title'   => __( 'Delivery', 'pizzapilot' ),
+				'content' =>
+					'<p>' . __( 'Configure your delivery settings:', 'pizzapilot' ) . '</p>' .
+					'<ul>' .
+					'<li><strong>' . __( 'Delivery Postcode', 'pizzapilot' ) . '</strong> — ' . __( 'Your store\'s postcode, used as the origin for distance calculations.', 'pizzapilot' ) . '</li>' .
+					'<li><strong>' . __( 'Delivery Radius', 'pizzapilot' ) . '</strong> — ' . __( 'Maximum distance for delivery orders. Customers outside this radius can only select Collection.', 'pizzapilot' ) . '</li>' .
+					'<li><strong>' . __( 'Start / End Time', 'pizzapilot' ) . '</strong> — ' . __( 'The window during which 30-minute delivery slots are generated for today.', 'pizzapilot' ) . '</li>' .
+					'</ul>',
+			)
+		);
+
+		$screen->add_help_tab(
+			array(
+				'id'      => 'pizzapilot-help-advanced',
+				'title'   => __( 'Advanced', 'pizzapilot' ),
+				'content' => '<p>' . __( 'The Advanced tab shows features that can be unlocked with PizzaPilot Pro, including future date ordering, slot capacity limits, recurring slot templates, and interactive delivery maps.', 'pizzapilot' ) . '</p>',
+			)
+		);
+
+		$screen->set_help_sidebar(
+			'<p><strong>' . __( 'For more information:', 'pizzapilot' ) . '</strong></p>' .
+			'<p><a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-upgrade' ) ) . '">' . __( 'PizzaPilot Pro', 'pizzapilot' ) . '</a></p>'
+		);
+	}
+
+	/**
 	 * Render the PizzaPilot settings page with tabbed interface.
 	 * 
 	 * Creates a tabbed interface for different setting categories:
