@@ -1,4 +1,21 @@
 /**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
+ * PizzaPilot Admin Styles
+ *
+ * @package    Pizzapilot
+ * @subpackage Pizzapilot/admin/css
+ * @since      1.0.0
  */
+
+/* Pro feature badge */
+.pizzapilot-pro-badge {
+	display: inline-block;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	padding: 2px 6px;
+	border-radius: 3px;
+	background: #f0b849;
+	color: #fff;
+	vertical-align: middle;
+}
