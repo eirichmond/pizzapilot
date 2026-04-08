@@ -537,7 +537,10 @@ class Pizzapilot_Settings {
 		$option = $this->get_setting( 'delivery_radius', 5 );
 		$units = $this->get_setting( 'radius_unit', 'km' );
 		echo '<input type="number" id="pizzapilot_delivery_radius" name="pizzapilot_delivery_settings[delivery_radius]" value="' . esc_attr( $option ) . '" class="small-text" min="1" step="1" />';
-		echo '<label for="pizzapilot_delivery_radius"> ' . esc_html__( 'Enter the delivery radius. (' . esc_attr( $units ) . ')', 'pizzapilot' ) . '</label>';
+		echo '<label for="pizzapilot_delivery_radius"> ';
+		/* translators: %s: unit of measurement (km or miles) */
+		echo esc_html( sprintf( __( 'Enter the delivery radius (%s).', 'pizzapilot' ), $units ) );
+		echo '</label>';
 	}
 
 	/**
