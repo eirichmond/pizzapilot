@@ -90,6 +90,37 @@ class PizzaPilot_Kitchen {
 	}
 
 	/**
+	 * Add contextual help tab to the Kitchen Orders page.
+	 *
+	 * Provides guidance on using the kitchen order view via the
+	 * WordPress Help dropdown at the top of the screen.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function add_kitchen_help_tab() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || 'pizzapilot_page_pizzapilot-kitchen' !== $screen->id ) {
+			return;
+		}
+
+		$screen->add_help_tab(
+			array(
+				'id'      => 'pizzapilot-help-kitchen',
+				'title'   => __( 'Kitchen Orders', 'pizzapilot' ),
+				'content' =>
+					'<p>' . __( 'This page shows today\'s orders grouped by delivery time slot.', 'pizzapilot' ) . '</p>' .
+					'<ul>' .
+					'<li>' . __( 'Each card shows the customer name, delivery type, and ordered items.', 'pizzapilot' ) . '</li>' .
+					'<li>' . __( 'Click "Mark Completed" to flag an order as done. Completed orders are dimmed.', 'pizzapilot' ) . '</li>' .
+					'<li>' . __( 'Use the Refresh button to reload orders — the page does not auto-update.', 'pizzapilot' ) . '</li>' .
+					'</ul>',
+			)
+		);
+	}
+
+	/**
 	 * Render the kitchen orders admin page.
 	 *
 	 * @since    1.1.0
