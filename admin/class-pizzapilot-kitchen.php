@@ -52,20 +52,19 @@ class PizzaPilot_Kitchen {
 	}
 
 	/**
-	 * Register the kitchen orders admin menu page.
+	 * Register the kitchen orders submenu page under PizzaPilot.
 	 *
 	 * @since    1.1.0
 	 * @return   void
 	 */
 	public function add_kitchen_menu() {
-		add_menu_page(
+		add_submenu_page(
+			'pizzapilot-settings',
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			'edit_shop_orders',
 			'pizzapilot-kitchen',
-			array( $this, 'render_kitchen_page' ),
-			'dashicons-food',
-			56
+			array( $this, 'render_kitchen_page' )
 		);
 	}
 
@@ -77,7 +76,7 @@ class PizzaPilot_Kitchen {
 	 * @return   void
 	 */
 	public function enqueue_kitchen_styles( $hook_suffix ) {
-		if ( 'toplevel_page_pizzapilot-kitchen' !== $hook_suffix ) {
+		if ( 'pizzapilot_page_pizzapilot-kitchen' !== $hook_suffix ) {
 			return;
 		}
 
