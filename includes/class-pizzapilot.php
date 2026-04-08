@@ -178,6 +178,7 @@ class Pizzapilot {
 
 		$this->loader->add_action( 'admin_menu', $plugin_settings, 'ppilot_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_settings, 'ppilot_register_settings' );
+		$this->loader->add_action( 'admin_head', $plugin_settings, 'add_settings_help_tabs' );
 
 	}
 
@@ -203,6 +204,7 @@ class Pizzapilot {
 
 		$this->loader->add_action( 'admin_menu', $plugin_kitchen, 'add_kitchen_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_kitchen, 'enqueue_kitchen_styles' );
+		$this->loader->add_action( 'admin_head', $plugin_kitchen, 'add_kitchen_help_tab' );
 		$this->loader->add_action( 'admin_post_pizzapilot_mark_kitchen_completed', $plugin_kitchen, 'handle_mark_completed' );
 		$this->loader->add_action( 'admin_action_pizzapilot_dismiss_kitchen_pro', $plugin_kitchen, 'handle_dismiss_kitchen_pro' );
 
