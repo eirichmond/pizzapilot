@@ -69,7 +69,7 @@ class PizzaPilot_Pro_Teasers {
 		}
 
 		add_submenu_page(
-			'pizzapilot-kitchen',
+			'pizzapilot-settings',
 			__( 'Upgrade to Pro', 'pizzapilot' ),
 			'<span style="color: #f0b849;">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</span>',
 			'manage_options',
@@ -86,7 +86,7 @@ class PizzaPilot_Pro_Teasers {
 	 * @return   void
 	 */
 	public function enqueue_upgrade_styles( $hook_suffix ) {
-		if ( 'kitchen-orders_page_pizzapilot-upgrade' !== $hook_suffix ) {
+		if ( 'pizzapilot_page_pizzapilot-upgrade' !== $hook_suffix ) {
 			return;
 		}
 
