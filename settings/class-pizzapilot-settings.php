@@ -338,13 +338,6 @@ class Pizzapilot_Settings {
 				'pizzapilot_advanced'
 			);
 
-			add_settings_field(
-				'pizzapilot_notifications_pro',
-				esc_html__( 'Customer Notifications', 'pizzapilot' ),
-				array( $this, 'pro_notifications_callback' ),
-				'pizzapilot-settings-advanced',
-				'pizzapilot_advanced'
-			);
 		}
 
 		/**
@@ -672,19 +665,6 @@ class Pizzapilot_Settings {
 		$this->render_pro_feature_preview(
 			__( 'Interactive Mapbox maps on checkout and admin pages.', 'pizzapilot' ),
 			__( 'Customers pin their location on a map. Supports What3Words for precise delivery.', 'pizzapilot' )
-		);
-	}
-
-	/**
-	 * Callback to render the greyed-out Notifications Pro feature.
-	 *
-	 * @since    1.1.0
-	 * @return   void
-	 */
-	public function pro_notifications_callback() {
-		$this->render_pro_feature_preview(
-			__( 'SMS and email updates for order status changes.', 'pizzapilot' ),
-			__( 'Notify customers when their order is being prepared, out for delivery, or delivered.', 'pizzapilot' )
 		);
 	}
 
