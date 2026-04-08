@@ -61,9 +61,11 @@ class Pizzapilot_Delivery_Checker {
 		$customer_postcode = isset( $_POST['postcode'] ) ? sanitize_text_field( wp_unslash( $_POST['postcode'] ) ) : '';
 
 		if ( empty( $customer_postcode ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Please enter a postcode.', 'pizzapilot' ),
-			) );
+			wp_send_json_error(
+				array(
+					'message' => __( 'Please enter a postcode.', 'pizzapilot' ),
+				)
+			);
 		}
 
 		// Get store settings
@@ -73,45 +75,53 @@ class Pizzapilot_Delivery_Checker {
 		$radius_unit    = isset( $settings['radius_unit'] ) ? $settings['radius_unit'] : 'km';
 
 		if ( empty( $store_postcode ) ) {
-			wp_send_json_error( array(
-				'message' => __( 'Delivery postcode not configured. Please contact the store.', 'pizzapilot' ),
-			) );
+			wp_send_json_error(
+				array(
+					'message' => __( 'Delivery postcode not configured. Please contact the store.', 'pizzapilot' ),
+				)
+			);
 		}
 
 		// Calculate distance using geocoding
 		$distance = $this->calculate_postcode_distance( $store_postcode, $customer_postcode, $radius_unit );
 
 		if ( false === $distance ) {
-			wp_send_json_error( array(
-				'message' => __( 'We could not verify your postcode. Please check it and try again.', 'pizzapilot' ),
-			) );
+			wp_send_json_error(
+				array(
+					'message' => __( 'We could not verify your postcode. Please check it and try again.', 'pizzapilot' ),
+				)
+			);
 		}
 
 		// Check if within radius
 		if ( $distance <= $max_radius ) {
-			wp_send_json_success( array(
-				'eligible' => true,
-				'distance' => $distance,
-				'unit'     => $radius_unit,
-				'message'  => sprintf(
+			wp_send_json_success(
+				array(
+					'eligible' => true,
+					'distance' => $distance,
+					'unit'     => $radius_unit,
+					'message'  => sprintf(
 					/* translators: 1: distance, 2: unit (km/miles) */
-					__( 'Great! We deliver to your area (approximately %1$s %2$s away).', 'pizzapilot' ),
-					number_format( $distance, 1 ),
-					$radius_unit
-				),
-			) );
+						__( 'Great! We deliver to your area (approximately %1$s %2$s away).', 'pizzapilot' ),
+						number_format( $distance, 1 ),
+						$radius_unit
+					),
+				)
+			);
 		} else {
-			wp_send_json_success( array(
-				'eligible' => false,
-				'distance' => $distance,
-				'unit'     => $radius_unit,
-				'message'  => sprintf(
+			wp_send_json_success(
+				array(
+					'eligible' => false,
+					'distance' => $distance,
+					'unit'     => $radius_unit,
+					'message'  => sprintf(
 					/* translators: 1: distance, 2: unit (km/miles) */
-					__( 'Sorry, your postcode is outside our delivery area (approximately %1$s %2$s away). Please select "Collection" instead.', 'pizzapilot' ),
-					number_format( $distance, 1 ),
-					$radius_unit
-				),
-			) );
+						__( 'Sorry, your postcode is outside our delivery area (approximately %1$s %2$s away). Please select "Collection" instead.', 'pizzapilot' ),
+						number_format( $distance, 1 ),
+						$radius_unit
+					),
+				)
+			);
 		}
 	}
 
@@ -331,7 +341,7 @@ class Pizzapilot_Delivery_Checker {
 	 * @return   void
 	 * @throws   Exception  If validation fails, throws exception to block checkout.
 	 */
-	public function validate_delivery_eligibility_block( $order, $request ) {
+	public function validate_delivery_eligibility_block( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $request required by WC action signature.
 		// Get delivery type from order meta
 		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
 
