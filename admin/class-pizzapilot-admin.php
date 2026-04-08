@@ -50,8 +50,7 @@ class Pizzapilot_Admin {
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	/**
@@ -74,7 +73,6 @@ class Pizzapilot_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pizzapilot-admin.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -97,7 +95,6 @@ class Pizzapilot_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pizzapilot-admin.js', array( 'jquery' ), $this->version, false );
-
 	}
 
 	/**
@@ -179,11 +176,11 @@ class Pizzapilot_Admin {
 		$end_datetime->modify( '+30 minutes' );
 
 		// Format: "Tuesday 24th Jun from 9:30am to 10:00am"
-		$day_name = $datetime->format( 'l' );
+		$day_name   = $datetime->format( 'l' );
 		$day_number = $datetime->format( 'jS' );
-		$month = $datetime->format( 'M' );
+		$month      = $datetime->format( 'M' );
 		$start_time = $datetime->format( 'g:ia' );
-		$end_time = $end_datetime->format( 'g:ia' );
+		$end_time   = $end_datetime->format( 'g:ia' );
 
 		return sprintf(
 			'%s %s %s from %s to %s',
@@ -207,7 +204,7 @@ class Pizzapilot_Admin {
 	 * @param    object   $order     The order object.
 	 * @return   bool                False to hide the field, true to show.
 	 */
-	public function pizzapilot_hide_checkout_field_display( $display, $key, $order ) {
+	public function pizzapilot_hide_checkout_field_display( $display, $key, $order ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $order required by WC filter signature.
 		// Hide PizzaPilot fields from the default display
 		$fields_to_hide = array(
 			'pizzapilot/delivery-type',
@@ -233,7 +230,7 @@ class Pizzapilot_Admin {
 	public function pizzapilot_hide_meta_css() {
 		$screen = get_current_screen();
 
-		if ( ! $screen || ( $screen->id !== 'shop_order' && $screen->id !== 'woocommerce_page_wc-orders' ) ) {
+		if ( ! $screen || ( 'shop_order' !== $screen->id && 'woocommerce_page_wc-orders' !== $screen->id ) ) {
 			return;
 		}
 
@@ -268,7 +265,7 @@ class Pizzapilot_Admin {
 			$new_columns[ $key ] = $column;
 
 			// Insert after order status column
-			if ( $key === 'order_status' ) {
+			if ( 'order_status' === $key ) {
 				$new_columns['pizzapilot_delivery'] = __( 'Delivery Slot', 'pizzapilot' );
 			}
 		}
@@ -287,7 +284,7 @@ class Pizzapilot_Admin {
 	 * @return   void
 	 */
 	public function pizzapilot_order_column_content( $column, $post_id ) {
-		if ( $column !== 'pizzapilot_delivery' ) {
+		if ( 'pizzapilot_delivery' !== $column ) {
 			return;
 		}
 
@@ -307,7 +304,7 @@ class Pizzapilot_Admin {
 	 * @return   void
 	 */
 	public function pizzapilot_order_column_content_hpos( $column, $order ) {
-		if ( $column !== 'pizzapilot_delivery' ) {
+		if ( 'pizzapilot_delivery' !== $column ) {
 			return;
 		}
 
@@ -387,5 +384,4 @@ class Pizzapilot_Admin {
 
 		return array_merge( $plugin_links, $links );
 	}
-
 }

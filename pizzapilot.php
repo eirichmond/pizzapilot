@@ -45,7 +45,7 @@ define( 'PIZZAPILOT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-pizzapilot-activator.php
  */
-function activate_pizzapilot() {
+function pizzapilot_activate() {
 	require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-activator.php';
 	Pizzapilot_Activator::activate();
 }
@@ -54,13 +54,13 @@ function activate_pizzapilot() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-pizzapilot-deactivator.php
  */
-function deactivate_pizzapilot() {
+function pizzapilot_deactivate() {
 	require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-deactivator.php';
 	Pizzapilot_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_pizzapilot' );
-register_deactivation_hook( __FILE__, 'deactivate_pizzapilot' );
+register_activation_hook( __FILE__, 'pizzapilot_activate' );
+register_deactivation_hook( __FILE__, 'pizzapilot_deactivate' );
 
 /**
  * Display admin notices for plugin activation and dependency issues.
@@ -137,10 +137,9 @@ require PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot.php';
  *
  * @since    1.0.0
  */
-function run_pizzapilot() {
+function pizzapilot_run() {
 
 	$plugin = new Pizzapilot();
 	$plugin->run();
-
 }
-run_pizzapilot();
+pizzapilot_run();

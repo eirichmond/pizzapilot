@@ -55,7 +55,7 @@ class Pizzapilot_Settings {
 	 */
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->version     = $version;
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Pizzapilot_Settings {
 
 	/**
 	 * Render the PizzaPilot settings page with tabbed interface.
-	 * 
+	 *
 	 * Creates a tabbed interface for different setting categories:
 	 * - General: Basic plugin configuration
 	 * - Delivery: Delivery-related settings
@@ -155,51 +155,52 @@ class Pizzapilot_Settings {
 	 * @return   void
 	 */
 	public function settings_page() {
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- tab navigation only, no data processing.
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( wp_unslash( $_GET['tab'] ) ) : 'general';
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html__( 'PizzaPilot Settings', 'pizzapilot' ); ?></h1>
-			
+
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=pizzapilot-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=pizzapilot-settings&tab=general" class="nav-tab <?php echo 'general' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php echo esc_html__( 'General', 'pizzapilot' ); ?>
 				</a>
-				<a href="?page=pizzapilot-settings&tab=delivery" class="nav-tab <?php echo $active_tab == 'delivery' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=pizzapilot-settings&tab=delivery" class="nav-tab <?php echo 'delivery' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php echo esc_html__( 'Delivery', 'pizzapilot' ); ?>
 				</a>
 				<?php
 				/**
 				 * Filter to add additional tabs to the PizzaPilot settings page.
-				 * 
+				 *
 				 * @param string $active_tab The currently active tab.
 				 */
 				do_action( 'pizzapilot_settings_tabs', $active_tab );
 				?>
-				<a href="?page=pizzapilot-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=pizzapilot-settings&tab=advanced" class="nav-tab <?php echo 'advanced' === $active_tab ? 'nav-tab-active' : ''; ?>">
 					<?php echo esc_html__( 'Advanced', 'pizzapilot' ); ?>
 				</a>
 			</h2>
 
 			<form method="post" action="options.php">
 				<?php
-				if ( $active_tab == 'general' ) {
+				if ( 'general' === $active_tab ) {
 					settings_fields( 'pizzapilot_general_settings' );
 					do_settings_sections( 'pizzapilot-settings-general' );
-				} elseif ( $active_tab == 'delivery' ) {
+				} elseif ( 'delivery' === $active_tab ) {
 					settings_fields( 'pizzapilot_delivery_settings' );
 					do_settings_sections( 'pizzapilot-settings-delivery' );
-				} elseif ( $active_tab == 'advanced' ) {
+				} elseif ( 'advanced' === $active_tab ) {
 					settings_fields( 'pizzapilot_advanced_settings' );
 					do_settings_sections( 'pizzapilot-settings-advanced' );
 				}
-				
+
 				/**
 				 * Filter to add additional settings sections to the PizzaPilot settings page.
-				 * 
+				 *
 				 * @param string $active_tab The currently active tab.
 				 */
 				do_action( 'pizzapilot_settings_sections', $active_tab );
-				
+
 				submit_button();
 				?>
 			</form>
@@ -209,7 +210,7 @@ class Pizzapilot_Settings {
 
 	/**
 	 * Register all settings and their sections.
-	 * 
+	 *
 	 * Registers settings with WordPress Settings API including:
 	 * - Setting types and defaults
 	 * - Sanitization callbacks
@@ -220,7 +221,7 @@ class Pizzapilot_Settings {
 	 * @return   void
 	 */
 	public function ppilot_register_settings() {
-		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$pro_active      = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
 		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
 
 		// Register General Settings
@@ -230,7 +231,7 @@ class Pizzapilot_Settings {
 			array(
 				'type'              => 'array',
 				'default'           => array(),
-				'sanitize_callback' => array( $this, 'sanitize_general_settings' )
+				'sanitize_callback' => array( $this, 'sanitize_general_settings' ),
 			)
 		);
 
@@ -241,11 +242,11 @@ class Pizzapilot_Settings {
 			array(
 				'type'              => 'array',
 				'default'           => array(
-					'radius_unit'     => 'km',
+					'radius_unit'       => 'km',
 					'delivery_postcode' => '',
-					'delivery_radius' => 5,
+					'delivery_radius'   => 5,
 				),
-				'sanitize_callback' => array( $this, 'sanitize_delivery_settings' )
+				'sanitize_callback' => array( $this, 'sanitize_delivery_settings' ),
 			)
 		);
 
@@ -256,56 +257,56 @@ class Pizzapilot_Settings {
 			array(
 				'type'              => 'array',
 				'default'           => array(),
-				'sanitize_callback' => array( $this, 'sanitize_advanced_settings' )
+				'sanitize_callback' => array( $this, 'sanitize_advanced_settings' ),
 			)
 		);
 
 		// General Settings Tab - Basic plugin configuration
-		add_settings_section( 
-			'pizzapilot_general', 
-			esc_html__( 'General Settings', 'pizzapilot' ), 
-			array( $this, 'section_callback' ), 
-			'pizzapilot-settings-general' 
+		add_settings_section(
+			'pizzapilot_general',
+			esc_html__( 'General Settings', 'pizzapilot' ),
+			array( $this, 'section_callback' ),
+			'pizzapilot-settings-general'
 		);
 
-		add_settings_field( 
-			'pizzapilot_enabled', 
-			esc_html__( 'Enable PizzaPilot', 'pizzapilot' ), 
-			array( $this, 'enabled_callback' ), 
-			'pizzapilot-settings-general', 
-			'pizzapilot_general' 
+		add_settings_field(
+			'pizzapilot_enabled',
+			esc_html__( 'Enable PizzaPilot', 'pizzapilot' ),
+			array( $this, 'enabled_callback' ),
+			'pizzapilot-settings-general',
+			'pizzapilot_general'
 		);
 
 		// Delivery Settings Tab - Delivery configuration
-		add_settings_section( 
-			'pizzapilot_delivery', 
-			esc_html__( 'Delivery Settings', 'pizzapilot' ), 
-			array( $this, 'delivery_section_callback' ), 
-			'pizzapilot-settings-delivery' 
+		add_settings_section(
+			'pizzapilot_delivery',
+			esc_html__( 'Delivery Settings', 'pizzapilot' ),
+			array( $this, 'delivery_section_callback' ),
+			'pizzapilot-settings-delivery'
 		);
 
-		add_settings_field( 
-			'pizzapilot_delivery_postcode', 
-			esc_html__( 'Delivery Postcode', 'pizzapilot' ), 
-			array( $this, 'delivery_postcode_callback' ), 
-			'pizzapilot-settings-delivery', 
-			'pizzapilot_delivery' 
+		add_settings_field(
+			'pizzapilot_delivery_postcode',
+			esc_html__( 'Delivery Postcode', 'pizzapilot' ),
+			array( $this, 'delivery_postcode_callback' ),
+			'pizzapilot-settings-delivery',
+			'pizzapilot_delivery'
 		);
 
-		add_settings_field( 
-			'pizzapilot_delivery_radius', 
-			esc_html__( 'Delivery Radius', 'pizzapilot' ), 
-			array( $this, 'delivery_radius_callback' ), 
-			'pizzapilot-settings-delivery', 
-			'pizzapilot_delivery' 
+		add_settings_field(
+			'pizzapilot_delivery_radius',
+			esc_html__( 'Delivery Radius', 'pizzapilot' ),
+			array( $this, 'delivery_radius_callback' ),
+			'pizzapilot-settings-delivery',
+			'pizzapilot_delivery'
 		);
 
-		add_settings_field( 
-			'pizzapilot_radius_unit', 
-			esc_html__( 'Radius Unit', 'pizzapilot' ), 
-			array( $this, 'radius_unit_callback' ), 
-			'pizzapilot-settings-delivery', 
-			'pizzapilot_delivery' 
+		add_settings_field(
+			'pizzapilot_radius_unit',
+			esc_html__( 'Radius Unit', 'pizzapilot' ),
+			array( $this, 'radius_unit_callback' ),
+			'pizzapilot-settings-delivery',
+			'pizzapilot_delivery'
 		);
 
 		/**
@@ -317,7 +318,7 @@ class Pizzapilot_Settings {
 		 * @since    1.0.0
 		 * @return   void
 		 */
-		if ( !$pro_active ) {
+		if ( ! $pro_active ) {
 			add_settings_field(
 				'pizzapilot_delivery_start_time',
 				esc_html__( 'Delivery Start Time', 'pizzapilot' ),
@@ -335,7 +336,7 @@ class Pizzapilot_Settings {
 		 * @since    1.0.0
 		 * @return   void
 		 */
-		if ( !$pro_active ) {
+		if ( ! $pro_active ) {
 			add_settings_field(
 				'pizzapilot_delivery_end_time',
 				esc_html__( 'Delivery End Time', 'pizzapilot' ),
@@ -356,8 +357,8 @@ class Pizzapilot_Settings {
 		do_action( 'pizzapilot_register_pro_delivery_settings', $pro_active, 'pizzapilot-settings-delivery', 'pizzapilot_delivery' );
 
 		// Advanced Settings Tab - Pro features and advanced options
-		add_settings_section( 
-			'pizzapilot_advanced', 
+		add_settings_section(
+			'pizzapilot_advanced',
 			esc_html__( 'Advanced Settings', 'pizzapilot' ),
 			array( $this, 'advanced_section_callback' ),
 			'pizzapilot-settings-advanced'
@@ -430,11 +431,11 @@ class Pizzapilot_Settings {
 	 * @return array Sanitized settings
 	 */
 	public function sanitize_delivery_settings( $input ) {
-		$sanitized = array();
-		$sanitized['radius_unit'] = isset( $input['radius_unit'] ) && in_array( $input['radius_unit'], array( 'km', 'miles' ) ) ? $input['radius_unit'] : 'km';
+		$sanitized                      = array();
+		$sanitized['radius_unit']       = isset( $input['radius_unit'] ) && in_array( $input['radius_unit'], array( 'km', 'miles' ), true ) ? $input['radius_unit'] : 'km';
 		$sanitized['delivery_postcode'] = isset( $input['delivery_postcode'] ) ? sanitize_text_field( $input['delivery_postcode'] ) : '';
-		$sanitized['delivery_radius'] = isset( $input['delivery_radius'] ) ? absint( $input['delivery_radius'] ) : 5;
-		
+		$sanitized['delivery_radius']   = isset( $input['delivery_radius'] ) ? absint( $input['delivery_radius'] ) : 5;
+
 		// Sanitize delivery start time
 		if ( isset( $input['delivery_start_time'] ) ) {
 			// Validate time format (HH:mm)
@@ -469,7 +470,7 @@ class Pizzapilot_Settings {
 
 		return $sanitized;
 	}
-	
+
 
 	/**
 	 * Sanitize advanced settings
@@ -482,15 +483,15 @@ class Pizzapilot_Settings {
 		// For checkboxes, we need to explicitly check if the key exists in the input
 		// If it doesn't exist, it means the checkbox was unchecked
 		$sanitized['same_day_only'] = isset( $input['same_day_only'] ) ? true : false;
-		
+
 		/**
 		 * Allow Pro plugin to add its own sanitization
-		 * 
+		 *
 		 * @param array $sanitized The sanitized array so far
 		 * @param array $input The raw input array
 		 */
 		$sanitized = apply_filters( 'pizzapilot_sanitize_pro_settings', $sanitized, $input );
-		
+
 		return $sanitized;
 	}
 
@@ -501,35 +502,35 @@ class Pizzapilot_Settings {
 	 * @param mixed $default Default value if setting doesn't exist
 	 * @return mixed The setting value
 	 */
-	public function get_setting( $key, $default = null ) {
-		// Determine which option group the key belongs to
-		$general_keys = array( 'enabled' );
+	public function get_setting( $key, $default_value = null ) {
+		// Determine which option group the key belongs to.
+		$general_keys  = array( 'enabled' );
 		$delivery_keys = array( 'radius_unit', 'delivery_postcode', 'delivery_radius', 'delivery_start_time', 'delivery_end_time' );
 		$advanced_keys = array( 'same_day_only' );
 
 		/**
 		 * Allow Pro plugin to add its own setting keys
-		 * 
+		 *
 		 * @param array $advanced_keys Current advanced setting keys
 		 */
 		$advanced_keys = apply_filters( 'pizzapilot_advanced_setting_keys', $advanced_keys );
 
-		if ( in_array( $key, $general_keys ) ) {
+		if ( in_array( $key, $general_keys, true ) ) {
 			$settings = get_option( 'pizzapilot_general_settings', array() );
-		} elseif ( in_array( $key, $delivery_keys ) ) {
+		} elseif ( in_array( $key, $delivery_keys, true ) ) {
 			$settings = get_option( 'pizzapilot_delivery_settings', array() );
-		} elseif ( in_array( $key, $advanced_keys ) ) {
+		} elseif ( in_array( $key, $advanced_keys, true ) ) {
 			$settings = get_option( 'pizzapilot_advanced_settings', array() );
 		} else {
-			return $default;
+			return $default_value;
 		}
 
-		return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
+		return isset( $settings[ $key ] ) ? $settings[ $key ] : $default_value;
 	}
 
 	/**
 	 * Section callback for the general settings section.
-	 * 
+	 *
 	 * Displays a description of the general settings section.
 	 *
 	 * @since    1.0.0
@@ -541,7 +542,7 @@ class Pizzapilot_Settings {
 
 	/**
 	 * Section callback for the delivery settings section.
-	 * 
+	 *
 	 * Displays a description of the delivery settings section.
 	 *
 	 * @since    1.0.0
@@ -553,7 +554,7 @@ class Pizzapilot_Settings {
 
 	/**
 	 * Section callback for the advanced settings section.
-	 * 
+	 *
 	 * Displays a description of the advanced settings section.
 	 *
 	 * @since    1.0.0
@@ -587,7 +588,7 @@ class Pizzapilot_Settings {
 	 */
 	public function delivery_radius_callback() {
 		$option = $this->get_setting( 'delivery_radius', 5 );
-		$units = $this->get_setting( 'radius_unit', 'km' );
+		$units  = $this->get_setting( 'radius_unit', 'km' );
 		echo '<input type="number" id="pizzapilot_delivery_radius" name="pizzapilot_delivery_settings[delivery_radius]" value="' . esc_attr( $option ) . '" class="small-text" min="1" step="1" />';
 		echo '<label for="pizzapilot_delivery_radius"> ';
 		/* translators: %s: unit of measurement (km or miles) */
@@ -619,7 +620,7 @@ class Pizzapilot_Settings {
 	 * @return   void
 	 */
 	public function delivery_start_time_callback() {
-		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$pro_active      = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
 		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
 
 		$option = $this->get_setting( 'delivery_start_time', '09:30' );
@@ -648,7 +649,7 @@ class Pizzapilot_Settings {
 	 * @return   void
 	 */
 	public function delivery_end_time_callback() {
-		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$pro_active      = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
 		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
 
 		$option = $this->get_setting( 'delivery_end_time', '17:30' );
@@ -671,7 +672,7 @@ class Pizzapilot_Settings {
 	 * Callback to render the Same-Day Delivery Only checkbox.
 	 */
 	public function same_day_only_callback() {
-		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
+		$pro_active      = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
 		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
 		if ( $pro_active ) {
 			$option = $this->get_setting( 'same_day_only', true );
@@ -817,11 +818,11 @@ class Pizzapilot_Settings {
 				$timestamp = $current->getTimestamp();
 
 				// Create formatted value: 'Tuesday 24th Jun from 9:30am to 10:30am'
-				$day_name = $current->format( 'l' ); // Tuesday
-				$day_number = $current->format( 'jS' ); // 24th
-				$month = $current->format( 'M' ); // Jun
+				$day_name             = $current->format( 'l' ); // Tuesday
+				$day_number           = $current->format( 'jS' ); // 24th
+				$month                = $current->format( 'M' ); // Jun
 				$start_time_formatted = $current->format( 'g:ia' ); // 9:30am
-				$end_time_formatted = $slot_end->format( 'g:ia' ); // 10:00am
+				$end_time_formatted   = $slot_end->format( 'g:ia' ); // 10:00am
 
 				$value = sprintf( '%s %s %s from %s to %s', $day_name, $day_number, $month, $start_time_formatted, $end_time_formatted );
 
@@ -845,12 +846,12 @@ class Pizzapilot_Settings {
 	 */
 	public function get_formatted_delivery_slots() {
 		$slots = $this->get_delivery_time_slots();
-		
+
 		// die early if no slots are found
 		if ( empty( $slots ) ) {
 			return array();
 		}
-		
+
 		return apply_filters( 'pizzapilot_time_slots', $slots );
 	}
 }

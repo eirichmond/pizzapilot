@@ -24,7 +24,7 @@
  * @subpackage Pizzapilot/includes
  * @author     Elliott Richmond <elliott@squareonemd.co.uk>
  */
-class Pizzapilot_i18n {
+class Pizzapilot_I18n {
 
 
 	/**
@@ -39,9 +39,5 @@ class Pizzapilot_i18n {
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
-
 	}
-
-
-
 }
