@@ -52,20 +52,19 @@ class PizzaPilot_Kitchen {
 	}
 
 	/**
-	 * Register the kitchen orders admin menu page.
+	 * Register the kitchen orders submenu page under PizzaPilot.
 	 *
 	 * @since    1.1.0
 	 * @return   void
 	 */
 	public function add_kitchen_menu() {
-		add_menu_page(
+		add_submenu_page(
+			'pizzapilot-settings',
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			'edit_shop_orders',
 			'pizzapilot-kitchen',
-			array( $this, 'render_kitchen_page' ),
-			'dashicons-food',
-			56
+			array( $this, 'render_kitchen_page' )
 		);
 	}
 
@@ -77,7 +76,7 @@ class PizzaPilot_Kitchen {
 	 * @return   void
 	 */
 	public function enqueue_kitchen_styles( $hook_suffix ) {
-		if ( 'toplevel_page_pizzapilot-kitchen' !== $hook_suffix ) {
+		if ( 'pizzapilot_page_pizzapilot-kitchen' !== $hook_suffix ) {
 			return;
 		}
 
@@ -103,6 +102,8 @@ class PizzaPilot_Kitchen {
 
 		echo '<div class="wrap pizzapilot-kitchen-wrap">';
 		echo '<h1>' . esc_html__( 'Kitchen Orders', 'pizzapilot' ) . '</h1>';
+
+		$this->render_pro_upsell_banner();
 
 		echo '<p class="pizzapilot-kitchen-actions">';
 		echo esc_html__( 'Orders for today, grouped by time slot.', 'pizzapilot' ) . ' ';
@@ -282,6 +283,72 @@ class PizzaPilot_Kitchen {
 		 * @param string $new_status The new completion status ('yes' or 'no').
 		 */
 		do_action( 'pizzapilot_kitchen_order_toggled', $order_id, $new_status );
+
+		wp_safe_redirect( admin_url( 'admin.php?page=pizzapilot-kitchen' ) );
+		exit;
+	}
+
+	/**
+	 * Render the Pro upsell banner on the kitchen page.
+	 *
+	 * Shows a dismissible notice encouraging upgrade to Pro for advanced
+	 * kitchen features. Tracks dismissal in user meta so it stays hidden.
+	 * Only shown when Pro is not active.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	private function render_pro_upsell_banner() {
+		if ( Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' ) ) {
+			return;
+		}
+
+		$user_id   = get_current_user_id();
+		$dismissed = get_user_meta( $user_id, 'pizzapilot_kitchen_pro_dismissed', true );
+
+		if ( $dismissed ) {
+			return;
+		}
+
+		$upgrade_url = admin_url( 'admin.php?page=pizzapilot-upgrade' );
+		$dismiss_url = wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => 'pizzapilot_dismiss_kitchen_pro',
+					'page'   => 'pizzapilot-kitchen',
+				),
+				admin_url( 'admin.php' )
+			),
+			'pizzapilot_dismiss_kitchen_pro'
+		);
+
+		echo '<div class="notice notice-info pizzapilot-pro-banner">';
+		echo '<p>';
+		echo '<strong>' . esc_html__( 'PizzaPilot Pro', 'pizzapilot' ) . '</strong> &mdash; ';
+		echo esc_html__( 'Upgrade for live-updating orders, drag-and-drop reordering, and kitchen ticket printing.', 'pizzapilot' );
+		echo ' <a href="' . esc_url( $upgrade_url ) . '">' . esc_html__( 'Learn more', 'pizzapilot' ) . '</a>';
+		echo '</p>';
+		echo '<a href="' . esc_url( $dismiss_url ) . '" class="notice-dismiss-link" style="text-decoration:none;float:right;margin-top:-28px;">';
+		echo '<span class="dashicons dashicons-dismiss"></span>';
+		echo '</a>';
+		echo '</div>';
+	}
+
+	/**
+	 * Handle dismissal of the kitchen Pro upsell banner.
+	 *
+	 * Saves a user meta flag so the banner stays hidden for that user.
+	 * Verifies nonce and redirects back to the kitchen page.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function handle_dismiss_kitchen_pro() {
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'pizzapilot_dismiss_kitchen_pro' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'pizzapilot' ) );
+		}
+
+		update_user_meta( get_current_user_id(), 'pizzapilot_kitchen_pro_dismissed', '1' );
 
 		wp_safe_redirect( admin_url( 'admin.php?page=pizzapilot-kitchen' ) );
 		exit;
