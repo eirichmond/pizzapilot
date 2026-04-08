@@ -62,6 +62,20 @@ function deactivate_pizzapilot() {
 register_activation_hook( __FILE__, 'activate_pizzapilot' );
 register_deactivation_hook( __FILE__, 'deactivate_pizzapilot' );
 
+/**
+ * Declare compatibility with WooCommerce High-Performance Order Storage (HPOS).
+ *
+ * @since    1.1.0
+ */
+add_action(
+	'before_woocommerce_init',
+	function () {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+		}
+	}
+);
+
 require PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-helpers.php';
 
 /**
