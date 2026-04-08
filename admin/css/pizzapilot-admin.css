@@ -1,4 +1,50 @@
 /**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
+ * PizzaPilot Admin Styles
+ *
+ * @package    Pizzapilot
+ * @subpackage Pizzapilot/admin/css
+ * @since      1.0.0
  */
+
+/* Pro feature tooltip */
+.pizzapilot-pro-tooltip {
+	position: relative;
+	display: inline-block;
+	cursor: help;
+	border-bottom: 1px dotted #a7aaad;
+}
+
+.pizzapilot-pro-tooltip .pizzapilot-tooltip-text {
+	visibility: hidden;
+	opacity: 0;
+	width: 260px;
+	background: #1d2327;
+	color: #fff;
+	font-size: 12px;
+	line-height: 1.5;
+	text-align: left;
+	padding: 10px 12px;
+	border-radius: 4px;
+	position: absolute;
+	z-index: 100;
+	bottom: 130%;
+	left: 50%;
+	margin-left: -130px;
+	transition: opacity 0.2s;
+}
+
+.pizzapilot-pro-tooltip .pizzapilot-tooltip-text::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #1d2327 transparent transparent transparent;
+}
+
+.pizzapilot-pro-tooltip:hover .pizzapilot-tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
