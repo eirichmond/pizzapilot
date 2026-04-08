@@ -129,6 +129,11 @@ class Pizzapilot {
 		require_once PIZZAPILOT_PLUGIN_DIR . 'admin/class-pizzapilot-kitchen.php';
 
 		/**
+		 * The class responsible for Pro feature teasers and upgrade page.
+		 */
+		require_once PIZZAPILOT_PLUGIN_DIR . 'admin/class-pizzapilot-pro-teasers.php';
+
+		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
@@ -190,12 +195,22 @@ class Pizzapilot {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+		// Plugin action links on Plugins page.
+		$this->loader->add_filter( 'plugin_action_links_' . plugin_basename( PIZZAPILOT_PLUGIN_DIR . 'pizzapilot.php' ), $plugin_admin, 'pizzapilot_plugin_action_links' );
+
 		// Kitchen order interface.
 		$plugin_kitchen = new PizzaPilot_Kitchen( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_menu', $plugin_kitchen, 'add_kitchen_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_kitchen, 'enqueue_kitchen_styles' );
 		$this->loader->add_action( 'admin_post_pizzapilot_mark_kitchen_completed', $plugin_kitchen, 'handle_mark_completed' );
+		$this->loader->add_action( 'admin_action_pizzapilot_dismiss_kitchen_pro', $plugin_kitchen, 'handle_dismiss_kitchen_pro' );
+
+		// Pro feature teasers and upgrade page.
+		$plugin_pro_teasers = new PizzaPilot_Pro_Teasers( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_menu', $plugin_pro_teasers, 'add_upgrade_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_pro_teasers, 'enqueue_upgrade_styles' );
 
 		// Display PizzaPilot delivery info on order edit page
 		$this->loader->add_action( 'woocommerce_admin_order_data_after_billing_address', $plugin_admin, 'pizzapilot_display_order_meta' );
@@ -206,9 +221,13 @@ class Pizzapilot {
 		// Add CSS to hide fields as backup
 		$this->loader->add_action( 'admin_head', $plugin_admin, 'pizzapilot_hide_meta_css' );
 
-		// Add PizzaPilot column to orders list
+		// Add PizzaPilot column to orders list (CPT storage)
 		$this->loader->add_filter( 'manage_edit-shop_order_columns', $plugin_admin, 'pizzapilot_add_order_column' );
 		$this->loader->add_action( 'manage_shop_order_posts_custom_column', $plugin_admin, 'pizzapilot_order_column_content', 10, 2 );
+
+		// Add PizzaPilot column to orders list (HPOS storage)
+		$this->loader->add_filter( 'manage_woocommerce_page_wc-orders_columns', $plugin_admin, 'pizzapilot_add_order_column' );
+		$this->loader->add_action( 'manage_woocommerce_page_wc-orders_custom_column', $plugin_admin, 'pizzapilot_order_column_content_hpos', 10, 2 );
 
 	}
 
