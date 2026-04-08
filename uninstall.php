@@ -3,21 +3,9 @@
 /**
  * Fired when the plugin is uninstalled.
  *
- * When populating this file, consider the following flow
- * of control:
- *
- * - This method should be static
- * - Check if the $_REQUEST content actually is the plugin name
- * - Run an admin referrer check to make sure it goes through authentication
- * - Verify the output of $_GET makes sense
- * - Repeat with other user roles. Best directly by using the links/query string parameters.
- * - Repeat things for multisite. Once for a single site in the network, once sitewide.
- *
- * This file may be updated more in future version of the Boilerplate; however, this is the
- * general skeleton and outline for how the file should work.
- *
- * For more information, see the following discussion:
- * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
+ * Removes all plugin data including options, the custom database table,
+ * and cached transients. This only runs when the plugin is deleted
+ * via the WordPress admin, not on deactivation.
  *
  * @link       https://elliottrichmond.co.uk
  * @since      1.0.0
@@ -29,3 +17,30 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+// Delete plugin options.
+delete_option( 'pizzapilot_general_settings' );
+delete_option( 'pizzapilot_delivery_settings' );
+delete_option( 'pizzapilot_advanced_settings' );
+
+// Drop the order slots table.
+global $wpdb;
+$table_name = $wpdb->prefix . 'pizzapilot_order_slots';
+$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
+
+// Clear geocoding transients.
+$wpdb->query(
+	"DELETE FROM {$wpdb->options}
+	WHERE option_name LIKE '_transient_pizzapilot_geo_%'
+	OR option_name LIKE '_transient_timeout_pizzapilot_geo_%'"
+); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+
+// Clear activation transients.
+delete_transient( 'pizzapilot_activation_notice' );
+delete_transient( 'pizzapilot_missing_woocommerce' );
+
+// Clean up user meta (kitchen banner dismissal).
+$wpdb->query(
+	"DELETE FROM {$wpdb->usermeta}
+	WHERE meta_key = 'pizzapilot_kitchen_pro_dismissed'"
+); // phpcs:ignore WordPress.DB.DirectDatabaseQuery

@@ -63,6 +63,48 @@ register_activation_hook( __FILE__, 'activate_pizzapilot' );
 register_deactivation_hook( __FILE__, 'deactivate_pizzapilot' );
 
 /**
+ * Display admin notices for plugin activation and dependency issues.
+ *
+ * Shows a warning if WooCommerce is not active, and a welcome message
+ * on first activation. Notices are one-time via transients.
+ *
+ * @since    1.1.0
+ * @return   void
+ */
+function pizzapilot_admin_notices() {
+	// WooCommerce missing notice.
+	if ( get_transient( 'pizzapilot_missing_woocommerce' ) ) {
+		echo '<div class="notice notice-error"><p>';
+		echo '<strong>' . esc_html__( 'PizzaPilot', 'pizzapilot' ) . '</strong>: ';
+		echo esc_html__( 'WooCommerce is required for PizzaPilot to work. Please install and activate WooCommerce.', 'pizzapilot' );
+		echo '</p></div>';
+		delete_transient( 'pizzapilot_missing_woocommerce' );
+
+		// Deactivate the plugin.
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['activate'] ) ) {
+			unset( $_GET['activate'] );
+		}
+		return;
+	}
+
+	// Welcome notice on first activation.
+	if ( get_transient( 'pizzapilot_activation_notice' ) ) {
+		echo '<div class="notice notice-success is-dismissible"><p>';
+		echo '<strong>' . esc_html__( 'PizzaPilot activated!', 'pizzapilot' ) . '</strong> ';
+		echo '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-settings' ) ) . '">';
+		echo esc_html__( 'Configure your settings', 'pizzapilot' );
+		echo '</a> ';
+		echo esc_html__( 'to get started.', 'pizzapilot' );
+		echo '</p></div>';
+		delete_transient( 'pizzapilot_activation_notice' );
+	}
+}
+add_action( 'admin_notices', 'pizzapilot_admin_notices' );
+
+/**
  * Declare compatibility with WooCommerce High-Performance Order Storage (HPOS).
  *
  * @since    1.1.0
