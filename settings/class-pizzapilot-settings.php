@@ -536,11 +536,27 @@ class Pizzapilot_Settings {
 
 		echo '<input type="time" id="pizzapilot_delivery_start_time" name="pizzapilot_delivery_settings[delivery_start_time]" value="' . esc_attr( $option ) . '" class="regular-text" />';
 		echo '<label for="pizzapilot_delivery_start_time"> ' . esc_html__( 'Enter the delivery start time.', 'pizzapilot' ) . '</label>';
-		if ( !$pro_active ) {
-			echo '<p class="description"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</p>';
+		if ( ! $pro_active ) {
+			echo '<p class="description">';
+			echo '<span class="pizzapilot-pro-tooltip">';
+			echo esc_html__( 'Pro: Custom time slots', 'pizzapilot' );
+			echo '<span class="pizzapilot-tooltip-text">';
+			echo esc_html__( 'With PizzaPilot Pro, create individual time slots with custom durations, day-specific schedules, and auto-recurring patterns.', 'pizzapilot' );
+			echo '</span></span> ';
+			echo wp_kses_post( $upgrade_message );
+			echo '</p>';
 		}
 	}
 
+	/**
+	 * Callback to render the Delivery End Time input field.
+	 *
+	 * Outputs a time input for the delivery end time setting on the Delivery tab.
+	 * Uses the value from settings or defaults to '17:30'.
+	 *
+	 * @since    1.0.0
+	 * @return   void
+	 */
 	public function delivery_end_time_callback() {
 		$pro_active = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
 		$upgrade_message = Pizzapilot_Helpers::pizzapilot_pro_upgrade_message();
@@ -549,10 +565,16 @@ class Pizzapilot_Settings {
 
 		echo '<input type="time" id="pizzapilot_delivery_end_time" name="pizzapilot_delivery_settings[delivery_end_time]" value="' . esc_attr( $option ) . '" class="regular-text" />';
 		echo '<label for="pizzapilot_delivery_end_time"> ' . esc_html__( 'Enter the delivery end time.', 'pizzapilot' ) . '</label>';
-		if ( !$pro_active ) {
-			echo '<p class="description"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</p>';
+		if ( ! $pro_active ) {
+			echo '<p class="description">';
+			echo '<span class="pizzapilot-pro-tooltip">';
+			echo esc_html__( 'Pro: Custom time slots', 'pizzapilot' );
+			echo '<span class="pizzapilot-tooltip-text">';
+			echo esc_html__( 'With PizzaPilot Pro, create individual time slots with custom durations, day-specific schedules, and auto-recurring patterns.', 'pizzapilot' );
+			echo '</span></span> ';
+			echo wp_kses_post( $upgrade_message );
+			echo '</p>';
 		}
-
 	}
 
 	/**
@@ -569,7 +591,14 @@ class Pizzapilot_Settings {
 			echo '<p class="description">' . esc_html__( 'Note: Changing this setting will require saving and refreshing the page to show/hide slot countdown options.', 'pizzapilot' ) . '</p>';
 		} else {
 			echo '<input type="checkbox" id="pizzapilot_same_day_only" name="pizzapilot_advanced_settings[same_day_only]" value="1" class="regular-text" disabled checked/>';
-			echo '<label for="pizzapilot_same_day_only"> ' . wp_kses_post( __( $upgrade_message, 'pizzapilot' ) ) . '</label>';
+			echo '<label for="pizzapilot_same_day_only"> ';
+			echo '<span class="pizzapilot-pro-tooltip">';
+			echo esc_html__( 'Same-day only', 'pizzapilot' );
+			echo '<span class="pizzapilot-tooltip-text">';
+			echo esc_html__( 'With PizzaPilot Pro, allow customers to select delivery dates up to 14 days in advance with a calendar date picker.', 'pizzapilot' );
+			echo '</span></span> ';
+			echo wp_kses_post( $upgrade_message );
+			echo '</label>';
 		}
 	}
 
