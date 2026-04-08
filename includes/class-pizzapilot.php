@@ -196,6 +196,7 @@ class Pizzapilot {
 		$this->loader->add_action( 'admin_menu', $plugin_kitchen, 'add_kitchen_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_kitchen, 'enqueue_kitchen_styles' );
 		$this->loader->add_action( 'admin_post_pizzapilot_mark_kitchen_completed', $plugin_kitchen, 'handle_mark_completed' );
+		$this->loader->add_action( 'admin_action_pizzapilot_dismiss_kitchen_pro', $plugin_kitchen, 'handle_dismiss_kitchen_pro' );
 
 		// Display PizzaPilot delivery info on order edit page
 		$this->loader->add_action( 'woocommerce_admin_order_data_after_billing_address', $plugin_admin, 'pizzapilot_display_order_meta' );
