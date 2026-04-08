@@ -59,25 +59,32 @@ class Pizzapilot_Settings {
 	}
 
 	/**
-	 * Register the admin menu for PizzaPilot settings.
-	 * 
-	 * Adds a submenu page under WooCommerce if active, otherwise under Settings.
-	 * This ensures the settings are easily accessible in the appropriate context.
+	 * Register the PizzaPilot top-level admin menu and Settings submenu.
+	 *
+	 * Creates a top-level "PizzaPilot" menu with a dashicons-food icon.
+	 * The first submenu item is "Settings" which contains the tabbed
+	 * interface for General, Delivery, and Advanced configuration.
 	 *
 	 * @since    1.0.0
 	 * @return   void
 	 */
 	public function ppilot_admin_menu() {
-		// Check if WooCommerce is active
-		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-			$parent_slug = 'woocommerce';
-		} else {
-			$parent_slug = 'options-general.php';
-		}
+		// Top-level menu.
+		add_menu_page(
+			__( 'PizzaPilot', 'pizzapilot' ),
+			__( 'PizzaPilot', 'pizzapilot' ),
+			'manage_options',
+			'pizzapilot-settings',
+			array( $this, 'settings_page' ),
+			'dashicons-food',
+			56
+		);
+
+		// "Settings" submenu (replaces the auto-generated first submenu item).
 		add_submenu_page(
-			$parent_slug,
-			'PizzaPilot Settings',
-			'PizzaPilot',
+			'pizzapilot-settings',
+			__( 'PizzaPilot Settings', 'pizzapilot' ),
+			__( 'Settings', 'pizzapilot' ),
 			'manage_options',
 			'pizzapilot-settings',
 			array( $this, 'settings_page' )

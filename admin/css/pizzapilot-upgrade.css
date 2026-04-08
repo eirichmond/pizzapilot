@@ -1,0 +1,67 @@
+/**
+ * PizzaPilot Upgrade to Pro Page
+ *
+ * @package    Pizzapilot
+ * @subpackage Pizzapilot/admin/css
+ * @since      1.1.0
+ */
+
+.pizzapilot-upgrade-wrap {
+	max-width: 800px;
+}
+
+.pizzapilot-upgrade-hero {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #f0b849;
+	padding: 30px;
+	margin: 20px 0;
+	text-align: center;
+}
+
+.pizzapilot-upgrade-tagline {
+	font-size: 16px;
+	color: #50575e;
+	margin: 0 0 20px 0;
+}
+
+/* Comparison table */
+.pizzapilot-comparison-table {
+	margin: 20px 0;
+	border-collapse: collapse;
+}
+
+.pizzapilot-comparison-table th,
+.pizzapilot-comparison-table td {
+	padding: 12px 15px;
+	text-align: left;
+}
+
+.pizzapilot-comparison-table thead th {
+	background: #f0f0f1;
+	font-weight: 600;
+}
+
+.pizzapilot-pro-col {
+	background: #fef9ee;
+	font-weight: 500;
+}
+
+.pizzapilot-comparison-table thead .pizzapilot-pro-col {
+	background: #f0b849;
+	color: #fff;
+}
+
+.pizzapilot-comparison-table tbody tr:nth-child(even) td {
+	background: #f9f9f9;
+}
+
+.pizzapilot-comparison-table tbody tr:nth-child(even) .pizzapilot-pro-col {
+	background: #fdf5e0;
+}
+
+/* CTA */
+.pizzapilot-upgrade-cta {
+	text-align: center;
+	padding: 20px 0;
+}
