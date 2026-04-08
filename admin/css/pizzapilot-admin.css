@@ -6,45 +6,16 @@
  * @since      1.0.0
  */
 
-/* Pro feature tooltip */
-.pizzapilot-pro-tooltip {
-	position: relative;
+/* Pro feature badge */
+.pizzapilot-pro-badge {
 	display: inline-block;
-	cursor: help;
-	border-bottom: 1px dotted #a7aaad;
-}
-
-.pizzapilot-pro-tooltip .pizzapilot-tooltip-text {
-	visibility: hidden;
-	opacity: 0;
-	width: 260px;
-	background: #1d2327;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	padding: 2px 6px;
+	border-radius: 3px;
+	background: #f0b849;
 	color: #fff;
-	font-size: 12px;
-	line-height: 1.5;
-	text-align: left;
-	padding: 10px 12px;
-	border-radius: 4px;
-	position: absolute;
-	z-index: 100;
-	bottom: 130%;
-	left: 50%;
-	margin-left: -130px;
-	transition: opacity 0.2s;
-}
-
-.pizzapilot-pro-tooltip .pizzapilot-tooltip-text::after {
-	content: "";
-	position: absolute;
-	top: 100%;
-	left: 50%;
-	margin-left: -5px;
-	border-width: 5px;
-	border-style: solid;
-	border-color: #1d2327 transparent transparent transparent;
-}
-
-.pizzapilot-pro-tooltip:hover .pizzapilot-tooltip-text {
-	visibility: visible;
-	opacity: 1;
+	vertical-align: middle;
 }

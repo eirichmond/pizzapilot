@@ -304,17 +304,45 @@ class Pizzapilot_Settings {
 			'pizzapilot-settings-advanced'
 		);
 
-		add_settings_field( 
-			'pizzapilot_same_day_only', 
+		add_settings_field(
+			'pizzapilot_same_day_only',
 			esc_html__( 'Same-Day Delivery Only', 'pizzapilot' ),
 			array( $this, 'same_day_only_callback' ),
 			'pizzapilot-settings-advanced',
 			'pizzapilot_advanced'
 		);
 
+		// Show greyed-out Pro feature previews when Pro is not active.
+		if ( ! $pro_active ) {
+			add_settings_field(
+				'pizzapilot_slot_capacity_pro',
+				esc_html__( 'Slot Capacity Limits', 'pizzapilot' ),
+				array( $this, 'pro_slot_capacity_callback' ),
+				'pizzapilot-settings-advanced',
+				'pizzapilot_advanced'
+			);
+
+			add_settings_field(
+				'pizzapilot_recurring_slots_pro',
+				esc_html__( 'Auto-Generated Recurring Slots', 'pizzapilot' ),
+				array( $this, 'pro_recurring_slots_callback' ),
+				'pizzapilot-settings-advanced',
+				'pizzapilot_advanced'
+			);
+
+			add_settings_field(
+				'pizzapilot_delivery_maps_pro',
+				esc_html__( 'Interactive Delivery Maps', 'pizzapilot' ),
+				array( $this, 'pro_delivery_maps_callback' ),
+				'pizzapilot-settings-advanced',
+				'pizzapilot_advanced'
+			);
+
+		}
+
 		/**
 		 * Allow Pro plugin to add its own settings fields
-		 * 
+		 *
 		 * @param bool $pro_active Whether the Pro plugin is active
 		 * @param string $settings_page The settings page slug
 		 * @param string $section_id The section ID
@@ -600,6 +628,73 @@ class Pizzapilot_Settings {
 			echo wp_kses_post( $upgrade_message );
 			echo '</label>';
 		}
+	}
+
+	/**
+	 * Render a greyed-out Pro feature preview field.
+	 *
+	 * Displays a disabled input with a PRO badge and description,
+	 * used to showcase features only available in Pro.
+	 *
+	 * @since    1.1.0
+	 * @param    string $label       The feature label text.
+	 * @param    string $description The feature description text.
+	 * @return   void
+	 */
+	private function render_pro_feature_preview( $label, $description ) {
+		$upgrade_url = admin_url( 'admin.php?page=pizzapilot-upgrade' );
+
+		echo '<span class="pizzapilot-pro-badge">';
+		echo esc_html__( 'PRO', 'pizzapilot' );
+		echo '</span> ';
+		echo '<span class="pizzapilot-pro-label" style="color: #a7aaad;">';
+		echo esc_html( $label );
+		echo '</span>';
+		echo '<p class="description" style="color: #a7aaad;">';
+		echo esc_html( $description ) . ' ';
+		echo '<a href="' . esc_url( $upgrade_url ) . '">';
+		echo esc_html__( 'Upgrade to Pro', 'pizzapilot' );
+		echo '</a>';
+		echo '</p>';
+	}
+
+	/**
+	 * Callback to render the greyed-out Slot Capacity Pro feature.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function pro_slot_capacity_callback() {
+		$this->render_pro_feature_preview(
+			__( 'Set maximum orders or pizza quantities per time slot.', 'pizzapilot' ),
+			__( 'Slots auto-lock when capacity is reached. Separate limits for delivery vs collection.', 'pizzapilot' )
+		);
+	}
+
+	/**
+	 * Callback to render the greyed-out Recurring Slots Pro feature.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function pro_recurring_slots_callback() {
+		$this->render_pro_feature_preview(
+			__( 'Define slot templates that auto-generate on a schedule.', 'pizzapilot' ),
+			__( 'Create recurring patterns like "Every Friday 5-8pm" with day-specific variations.', 'pizzapilot' )
+		);
+	}
+
+	/**
+	 * Callback to render the greyed-out Delivery Maps Pro feature.
+	 *
+	 * @since    1.1.0
+	 * @return   void
+	 */
+	public function pro_delivery_maps_callback() {
+		$this->render_pro_feature_preview(
+			__( 'Interactive Mapbox maps on checkout and admin pages.', 'pizzapilot' ),
+			__( 'Customers pin their location on a map. Supports What3Words for precise delivery.', 'pizzapilot' )
+		);
 	}
 
 	/**
