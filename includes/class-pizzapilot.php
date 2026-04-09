@@ -80,7 +80,6 @@ class Pizzapilot {
 		$this->define_settings_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -89,7 +88,7 @@ class Pizzapilot {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Pizzapilot_Loader. Orchestrates the hooks of the plugin.
-	 * - Pizzapilot_i18n. Defines internationalization functionality.
+	 * - Pizzapilot_I18n. Defines internationalization functionality.
 	 * - Pizzapilot_Admin. Defines all hooks for the admin area.
 	 * - Pizzapilot_Public. Defines all hooks for the public side of the site.
 	 *
@@ -145,13 +144,12 @@ class Pizzapilot {
 		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-delivery-checker.php';
 
 		$this->loader = new Pizzapilot_Loader();
-
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Pizzapilot_i18n class in order to set the domain and to register the hook
+	 * Uses the Pizzapilot_I18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -159,10 +157,9 @@ class Pizzapilot {
 	 */
 	private function set_locale() {
 
-		$plugin_i18n = new Pizzapilot_i18n();
+		$plugin_i18n = new Pizzapilot_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -179,7 +176,6 @@ class Pizzapilot {
 		$this->loader->add_action( 'admin_menu', $plugin_settings, 'ppilot_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_settings, 'ppilot_register_settings' );
 		$this->loader->add_action( 'admin_head', $plugin_settings, 'add_settings_help_tabs' );
-
 	}
 
 	/**
@@ -230,7 +226,6 @@ class Pizzapilot {
 		// Add PizzaPilot column to orders list (HPOS storage)
 		$this->loader->add_filter( 'manage_woocommerce_page_wc-orders_columns', $plugin_admin, 'pizzapilot_add_order_column' );
 		$this->loader->add_action( 'manage_woocommerce_page_wc-orders_custom_column', $plugin_admin, 'pizzapilot_order_column_content_hpos', 10, 2 );
-
 	}
 
 	/**
@@ -305,5 +300,4 @@ class Pizzapilot {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

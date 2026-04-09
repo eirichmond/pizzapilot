@@ -25,8 +25,8 @@ delete_option( 'pizzapilot_advanced_settings' );
 
 // Drop the order slots table.
 global $wpdb;
-$table_name = $wpdb->prefix . 'pizzapilot_order_slots';
-$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
+$pizzapilot_table = $wpdb->prefix . 'pizzapilot_order_slots';
+$wpdb->query( "DROP TABLE IF EXISTS {$pizzapilot_table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL
 
 // Clear geocoding transients.
 $wpdb->query(

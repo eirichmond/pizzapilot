@@ -50,8 +50,7 @@ class Pizzapilot_Public {
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	/**
@@ -74,7 +73,6 @@ class Pizzapilot_Public {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pizzapilot-public.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -121,14 +119,14 @@ class Pizzapilot_Public {
 	 */
 	public function pizzapilot_register_checkout_fields() {
 		$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
-		$slots = $settings->get_formatted_delivery_slots();
+		$slots    = $settings->get_formatted_delivery_slots();
 
 		// Convert to options format
 		$options = array();
 		foreach ( $slots as $timestamp => $label ) {
 			$options[] = array(
 				'value' => $timestamp,
-				'label' => $label
+				'label' => $label,
 			);
 		}
 
@@ -143,13 +141,13 @@ class Pizzapilot_Public {
 				'options'     => array(
 					array(
 						'value' => 'delivery',
-						'label' => __( 'Delivery', 'pizzapilot' )
+						'label' => __( 'Delivery', 'pizzapilot' ),
 					),
 					array(
 						'value' => 'collect',
-						'label' => __( 'Collect', 'pizzapilot' )
-					)
-				)
+						'label' => __( 'Collect', 'pizzapilot' ),
+					),
+				),
 			)
 		);
 
@@ -161,7 +159,7 @@ class Pizzapilot_Public {
 				'type'        => 'select',
 				'required'    => true,
 				'placeholder' => __( 'Select a time', 'pizzapilot' ),
-				'options'     => $options
+				'options'     => $options,
 			)
 		);
 	}
@@ -176,8 +174,10 @@ class Pizzapilot_Public {
 	 * @return   void
 	 */
 	public function pizzapilot_validate_checkout_fields() {
-		// Get the posted data
-		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( $_POST['pizzapilot/delivery-type'] ) : '';
+		// Nonce verified by WooCommerce via woocommerce_checkout_process.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
+		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( wp_unslash( $_POST['pizzapilot/delivery-type'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
 		$delivery_time = isset( $_POST['pizzapilot/delivery-time'] ) ? absint( $_POST['pizzapilot/delivery-time'] ) : 0;
 
 		// Validate delivery type
@@ -192,7 +192,7 @@ class Pizzapilot_Public {
 		}
 
 		// Verify the selected time slot is still valid (hasn't elapsed)
-		$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
+		$settings        = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 		$available_slots = $settings->get_formatted_delivery_slots();
 
 		if ( ! isset( $available_slots[ $delivery_time ] ) ) {
@@ -217,8 +217,10 @@ class Pizzapilot_Public {
 			return;
 		}
 
-		// Get the posted data
-		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( $_POST['pizzapilot/delivery-type'] ) : '';
+		// Nonce verified by WooCommerce via woocommerce_checkout_update_order_meta.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
+		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( wp_unslash( $_POST['pizzapilot/delivery-type'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
 		$delivery_time = isset( $_POST['pizzapilot/delivery-time'] ) ? absint( $_POST['pizzapilot/delivery-time'] ) : 0;
 
 		// Save to order meta (HPOS-safe)
@@ -230,7 +232,7 @@ class Pizzapilot_Public {
 			$order->update_meta_data( '_pizzapilot_delivery_time', $delivery_time );
 
 			// Get the formatted slot label for display
-			$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
+			$settings        = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 			$available_slots = $settings->get_formatted_delivery_slots();
 
 			if ( isset( $available_slots[ $delivery_time ] ) ) {
@@ -258,7 +260,7 @@ class Pizzapilot_Public {
 	 * @param    object    $request  The request object from Store API.
 	 * @return   void
 	 */
-	public function pizzapilot_save_checkout_fields_block( $order, $request ) {
+	public function pizzapilot_save_checkout_fields_block( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $request required by WC action signature.
 		// Get order ID
 		$order_id = $order->get_id();
 
@@ -275,7 +277,7 @@ class Pizzapilot_Public {
 			$order->update_meta_data( '_pizzapilot_delivery_time', $delivery_time );
 
 			// Get the formatted slot label for display
-			$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
+			$settings        = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 			$available_slots = $settings->get_formatted_delivery_slots();
 
 			if ( isset( $available_slots[ $delivery_time ] ) ) {
@@ -382,7 +384,7 @@ class Pizzapilot_Public {
 	 * @param    WC_Order  $order        The order object.
 	 * @return   void
 	 */
-	public function pizzapilot_handle_order_status_change( $order_id, $from_status, $to_status, $order ) {
+	public function pizzapilot_handle_order_status_change( $order_id, $from_status, $to_status, $order ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $order required by WC action signature.
 		// Release slot if order is cancelled or refunded
 		if ( in_array( $to_status, array( 'cancelled', 'refunded', 'failed' ), true ) ) {
 			$this->release_order_slot( $order_id );
@@ -428,5 +430,4 @@ class Pizzapilot_Public {
 		 */
 		do_action( 'pizzapilot_slot_released', $order_id, $delivery_time );
 	}
-
 }
