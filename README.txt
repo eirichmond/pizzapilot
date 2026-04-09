@@ -1,5 +1,5 @@
 === PizzaPilot ===
-Contributors: eirichmond
+Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 5.0
 Tested up to: 6.7
