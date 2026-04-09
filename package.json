@@ -1,0 +1,23 @@
+{
+  "name": "pizzapilot",
+  "version": "1.0.0",
+  "description": "Slot-based delivery and collection ordering for WooCommerce",
+  "private": true,
+  "scripts": {
+    "lint": "vendor/bin/phpcs",
+    "lint:fix": "vendor/bin/phpcbf",
+    "readme": "npx wp-readme-to-markdown --input readme.txt --output README.md",
+    "build": "node scripts/build.js",
+    "prebuild": "npm run readme"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eirichmond/pizzapilot.git"
+  },
+  "author": "Elliott Richmond",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "wp-readme-to-markdown": "^1.0.1"
+  }
+}
