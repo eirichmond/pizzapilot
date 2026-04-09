@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ruleset name="PizzaPilot">
+	<description>PHPCS ruleset for PizzaPilot plugin.</description>
+
+	<!-- Scan these files -->
+	<file>.</file>
+
+	<!-- Exclude third-party code -->
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>node_modules/*</exclude-pattern>
+	<exclude-pattern>tasks/*</exclude-pattern>
+	<exclude-pattern>scripts/*</exclude-pattern>
+	<exclude-pattern>languages/*</exclude-pattern>
+
+	<!-- Use WordPress-Extra as the base standard -->
+	<rule ref="WordPress-Extra">
+		<!-- Allow short array syntax -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!-- Verify text domain -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="pizzapilot"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Verify function/class prefixing -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="pizzapilot"/>
+				<element value="PIZZAPILOT"/>
+				<element value="Pizzapilot"/>
+				<element value="PizzaPilot"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- WooCommerce custom capabilities -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="edit_shop_orders"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- PHP compatibility -->
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="testVersion" value="7.2-"/>
+	<config name="minimum_wp_version" value="5.0"/>
+
+	<!-- Show sniff codes in reports for targeted fixes -->
+	<arg value="sp"/>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+</ruleset>
