@@ -27,3 +27,16 @@ node_modules/
 # Task files
 tasks.json
 tasks/ 
+
+# Documentation files
+PRD.md
+CLAUDE.md
+TASKS.md
+.claude/
+
+# Build output
+*.zip
+README.md
+
+# Composer
+vendor/
