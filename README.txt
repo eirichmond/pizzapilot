@@ -3,7 +3,7 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 5.0
 Tested up to: 6.7
-Stable tag: 1.0.0
+Stable tag: 1.2.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -67,6 +67,14 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.0 =
+* New: "Delivery Postcode Checker" block (woocommerce category) — icon-trigger modal that lets customers verify delivery to their postcode. Background and text colour controls in the block sidebar.
+* New: pizzapilot_delivery_checker_block_strings filter for overriding the block's user-facing copy.
+* Improved: postcode-check AJAX extracted to a shared helper (pizzapilot-postcode-api.js) reused by checkout and the new block.
+* Improved: public scripts only load on cart, checkout, or pages where they are needed — no longer enqueued site-wide.
+* Improved: WordPress-Extra PHPCS pass — zero errors, zero warnings.
+* Removed: empty public stylesheet placeholder.
+
 = 1.0.0 =
 * Initial release
 * Time slot-based ordering at WooCommerce checkout
@@ -76,6 +84,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * WooCommerce block and classic checkout support
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Adds the Delivery Postcode Checker block and a refactored, conditionally-enqueued public asset pipeline.
 
 = 1.0.0 =
 Initial release of PizzaPilot.
