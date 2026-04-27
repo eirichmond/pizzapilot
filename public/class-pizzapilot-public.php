@@ -54,57 +54,103 @@ class Pizzapilot_Public {
 	}
 
 	/**
-	 * Register the stylesheets for the public-facing side of the site.
+	 * Register stylesheets for the public-facing side of the site.
+	 *
+	 * Currently a no-op — the legacy public stylesheet was removed once the
+	 * checkout postcode messaging adopted standard WooCommerce notice classes
+	 * and the delivery-checker block began shipping its own scoped styles.
+	 * Hook is retained so any future public CSS can be added here without
+	 * editing the loader wiring.
 	 *
 	 * @since    1.0.0
+	 * @return   void
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Pizzapilot_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Pizzapilot_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pizzapilot-public.css', array(), $this->version, 'all' );
+		// Intentionally empty.
 	}
 
 	/**
-	 * Register the JavaScript for the public-facing side of the site.
+	 * Register and conditionally enqueue the public-facing JavaScript.
+	 *
+	 * Registration of the shared postcode-check API helper happens on every
+	 * front-end request so blocks (which auto-enqueue their viewScript only
+	 * on pages where the block is present) can resolve it as a dependency
+	 * regardless of which page renders the block.
+	 *
+	 * The legacy checkout-side script (pizzapilot-public.js) only enqueues
+	 * on cart and checkout pages — including the WooCommerce block-checkout
+	 * variants — so it doesn't load on every page of the site.
 	 *
 	 * @since    1.0.0
+	 * @return   void
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Pizzapilot_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Pizzapilot_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		// Always register the shared API helper. Localised data is attached
+		// here so any consumer that depends on this handle (the checkout
+		// script below, or the delivery-checker block's viewScript) gets
+		// ajaxUrl + nonce without re-localising.
+		wp_register_script(
+			'pizzapilot-postcode-api',
+			plugin_dir_url( __FILE__ ) . 'js/pizzapilot-postcode-api.js',
+			array(),
+			$this->version,
+			true
+		);
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pizzapilot-public.js', array( 'jquery' ), $this->version, false );
-
-		// Localize script for AJAX
 		wp_localize_script(
-			$this->plugin_name,
+			'pizzapilot-postcode-api',
 			'pizzapilotPublic',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( 'pizzapilot_postcode_check' ),
 			)
 		);
+
+		if ( ! self::is_checkout_context() ) {
+			return;
+		}
+
+		// Checkout-side script depends on the shared API helper.
+		wp_enqueue_script(
+			$this->plugin_name,
+			plugin_dir_url( __FILE__ ) . 'js/pizzapilot-public.js',
+			array( 'jquery', 'pizzapilot-postcode-api' ),
+			$this->version,
+			false
+		);
+	}
+
+	/**
+	 * Determine whether the current front-end request is a checkout context.
+	 *
+	 * Returns true on cart, checkout, or any singular page that contains a
+	 * WooCommerce cart or checkout block. Used to gate the legacy public
+	 * script so it only loads where it's actually needed.
+	 *
+	 * @since    1.2.0
+	 * @return   bool
+	 */
+	public static function is_checkout_context() {
+		if ( is_admin() ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_cart' ) && is_cart() ) {
+			return true;
+		}
+
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			return true;
+		}
+
+		if ( function_exists( 'has_block' ) && function_exists( 'is_singular' ) && is_singular() ) {
+			if ( has_block( 'woocommerce/cart' ) || has_block( 'woocommerce/checkout' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 

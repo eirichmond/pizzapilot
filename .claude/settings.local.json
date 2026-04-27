@@ -9,7 +9,19 @@
       "Bash(git push:*)",
       "Bash(gh pr:*)",
       "Bash(git rebase:*)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Read(//Users/elliottrichmond/Documents/Sites/casageeswootheme/**)",
+      "Bash(wp i18n:*)",
+      "Bash(composer install:*)",
+      "Bash(vendor/bin/phpcs:*)",
+      "Bash(vendor/bin/phpcbf:*)",
+      "Bash(git branch:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(unzip -l pizzapilot.zip)"
     ]
   }
 }

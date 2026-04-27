@@ -8,7 +8,6 @@
 	<!-- Exclude third-party code -->
 	<exclude-pattern>vendor/*</exclude-pattern>
 	<exclude-pattern>node_modules/*</exclude-pattern>
-	<exclude-pattern>tasks/*</exclude-pattern>
 	<exclude-pattern>scripts/*</exclude-pattern>
 	<exclude-pattern>languages/*</exclude-pattern>
 

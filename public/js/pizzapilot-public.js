@@ -39,38 +39,26 @@
 			return $('select[name="pizzapilot/delivery-type"]').val();
 		}
 
-		// Check postcode via AJAX
+		// Check postcode via the shared API helper (pizzapilot-postcode-api.js).
 		function checkPostcode(postcode) {
 			if (!postcode || postcode.length < 3) {
 				hideMessage();
 				return;
 			}
 
+			if (!window.pizzapilotPostcode || typeof window.pizzapilotPostcode.check !== 'function') {
+				showMessage('Unable to check delivery availability. Please try again.', 'error');
+				return;
+			}
+
 			// Show loading message
 			showMessage('Checking delivery availability...', 'loading');
 
-			$.ajax({
-				url: pizzapilotPublic.ajaxUrl,
-				type: 'POST',
-				data: {
-					action: 'pizzapilot_check_postcode',
-					nonce: pizzapilotPublic.nonce,
-					postcode: postcode
-				},
-				success: function(response) {
-					if (response.success && response.data) {
-						if (response.data.eligible) {
-							showMessage(response.data.message, 'success');
-						} else {
-							showMessage(response.data.message, 'error');
-						}
-					} else {
-						showMessage(response.data.message || 'Error checking postcode', 'error');
-					}
-				},
-				error: function() {
-					showMessage('Unable to check delivery availability. Please try again.', 'error');
-				}
+			window.pizzapilotPostcode.check(postcode).then(function (result) {
+				showMessage(result.message, result.eligible ? 'success' : 'error');
+			}).catch(function (err) {
+				var msg = (err && err.serverMessage) || 'Unable to check delivery availability. Please try again.';
+				showMessage(msg, 'error');
 			});
 		}
 

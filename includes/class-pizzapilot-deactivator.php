@@ -35,5 +35,4 @@ class Pizzapilot_Deactivator {
 	public static function deactivate() {
 		// Intentionally empty — cleanup happens in uninstall.php.
 	}
-
 }

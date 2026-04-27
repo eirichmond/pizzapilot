@@ -101,11 +101,11 @@ class Pizzapilot_Activator {
 			update_option(
 				'pizzapilot_delivery_settings',
 				array(
-					'delivery_postcode'    => '',
-					'delivery_radius'      => 5,
-					'radius_unit'          => 'km',
-					'delivery_start_time'  => '10:00',
-					'delivery_end_time'    => '17:30',
+					'delivery_postcode'   => '',
+					'delivery_radius'     => 5,
+					'radius_unit'         => 'km',
+					'delivery_start_time' => '10:00',
+					'delivery_end_time'   => '17:30',
 				)
 			);
 		}

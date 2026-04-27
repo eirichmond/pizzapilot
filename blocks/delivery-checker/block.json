@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "pizzapilot/delivery-checker",
+	"version": "1.0.0",
+	"title": "Delivery Postcode Checker",
+	"category": "woocommerce",
+	"icon": "location",
+	"description": "A button that opens a postcode checker modal so customers can verify if you deliver to their area.",
+	"keywords": ["pizza", "delivery", "postcode", "checker"],
+	"textdomain": "pizzapilot",
+	"supports": {
+		"html": false,
+		"align": ["left", "center", "right"],
+		"color": {
+			"background": true,
+			"text": true,
+			"link": false,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./edit.js",
+	"viewScript": ["pizzapilot-postcode-api", "file:./view.js"],
+	"style": "file:./style.css"
+}

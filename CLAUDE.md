@@ -94,24 +94,12 @@ INDEXES:
 
 ## Task Management
 
-### Tasks Folder
-Location: `tasks/`
+### Canonical Tracker
+`TASKS.md` (plugin root) is the single source of truth for free-plugin work. It lists completed tasks, outstanding feature work, and the WordPress.org release-readiness checklist.
 
-Contains **15 detailed development tasks** numbered `task_001.txt` through `task_015.txt`, plus a master JSON tracker.
+**Always read `TASKS.md` before starting any free-plugin work** and update it (mark items completed, add remaining notes) when you finish a task.
 
-### Task Tracking
-**CRITICAL**: Always check `tasks/tasks.json` before starting any development work. This file contains:
-- Complete task definitions with code examples
-- Test strategies for each feature
-- Task dependencies
-- Current status of each task
-- Implementation details and patterns
-
-### Task Status Workflow
-Tasks use these statuses:
-- `pending` - Not yet started
-- `in_progress` - Currently being worked on
-- `completed` - Finished and tested
+The original per-task spec files (`tasks/task_001.txt`–`task_015.txt`) and `tasks/tasks.json` were removed once the free plugin reached feature-complete; their content is captured in `TASKS.md` and the implementation itself.
 
 ## Key Classes and Structure
 
@@ -148,7 +136,7 @@ settings/
 2. **Use filters for extensibility**: Allow Pro to override behavior
 3. **Check for Pro version**: Use `class_exists('PizzaPilot_Pro')` when needed
 4. **Follow WordPress standards**: Settings API, nonces, sanitization, escaping
-5. **Update task status**: Mark tasks as completed in `tasks/tasks.json`
+5. **Update task status**: Mark items completed in `TASKS.md`
 
 ### Pro Feature Indicators
 

@@ -143,6 +143,11 @@ class Pizzapilot {
 		 */
 		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-delivery-checker.php';
 
+		/**
+		 * The class responsible for registering Gutenberg blocks.
+		 */
+		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-blocks.php';
+
 		$this->loader = new Pizzapilot_Loader();
 	}
 
@@ -259,6 +264,10 @@ class Pizzapilot {
 
 		// Initialize delivery radius checker
 		new Pizzapilot_Delivery_Checker();
+
+		// Register Gutenberg blocks.
+		$plugin_blocks = new Pizzapilot_Blocks();
+		$this->loader->add_action( 'init', $plugin_blocks, 'register_blocks' );
 	}
 
 	/**
