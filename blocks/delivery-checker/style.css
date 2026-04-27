@@ -1,0 +1,438 @@
+/**
+ * PizzaPilot delivery-checker block.
+ *
+ * Trigger:
+ *   The block exposes color.background and color.text supports. WordPress
+ *   applies the user's choices to the wrapper element via
+ *   get_block_wrapper_attributes(); the wrapper is sized and shaped to
+ *   match the trigger so the chosen background fills the visible circle,
+ *   and the chosen text color cascades through `currentColor` to the SVG
+ *   fill and the trigger's border.
+ *
+ * Modal:
+ *   Three child state containers (prompt / success / failure) live inside
+ *   the same panel. view.js toggles `[hidden]` on the modal and on the
+ *   active state container. Animations run on appear via the
+ *   `:not([hidden])` selector and respect prefers-reduced-motion.
+ *
+ *   Loading state: when view.js sets `aria-busy="true"` on the submit
+ *   button, a CSS-only spinner replaces the label.
+ *
+ * All selectors are prefixed `pizzapilot-delivery-checker-*` to avoid
+ * leaking onto host theme styles. A scoped box-sizing reset keeps theme
+ * resets from breaking inner sizing.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Scoped reset
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker,
+.pizzapilot-delivery-checker *,
+.pizzapilot-delivery-checker *::before,
+.pizzapilot-delivery-checker *::after,
+.pizzapilot-delivery-checker__modal,
+.pizzapilot-delivery-checker__modal *,
+.pizzapilot-delivery-checker__modal *::before,
+.pizzapilot-delivery-checker__modal *::after {
+	box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------------------
+ * Trigger
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker {
+	display: inline-block;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	line-height: 0;
+	vertical-align: middle;
+}
+
+.pizzapilot-delivery-checker__trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	line-height: 0;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.pizzapilot-delivery-checker__trigger:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+}
+
+.pizzapilot-delivery-checker__trigger:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Body scroll lock — applied while a modal is open.
+ * ------------------------------------------------------------------------- */
+
+body.pizzapilot-delivery-checker--scroll-locked {
+	overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+ * Modal
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker__modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	color: #1f2937;
+	font-family: inherit;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.pizzapilot-delivery-checker__modal[hidden] {
+	display: none;
+}
+
+.pizzapilot-delivery-checker__overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.6);
+	cursor: pointer;
+}
+
+.pizzapilot-delivery-checker__panel {
+	position: relative;
+	width: 100%;
+	max-width: 28rem;
+	max-height: calc(100vh - 2rem);
+	padding: 2.25rem 1.5rem 1.75rem;
+	border-radius: 0.75rem;
+	background: #fff;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+	text-align: center;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.pizzapilot-delivery-checker__close {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: #6b7280;
+	cursor: pointer;
+	line-height: 0;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.pizzapilot-delivery-checker__close:hover,
+.pizzapilot-delivery-checker__close:focus-visible {
+	background: rgba(15, 23, 42, 0.06);
+	color: #111827;
+	outline: none;
+}
+
+.pizzapilot-delivery-checker__close:focus-visible {
+	box-shadow: 0 0 0 2px #2563eb;
+}
+
+/* ---------------------------------------------------------------------------
+ * States
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker__state[hidden] {
+	display: none;
+}
+
+.pizzapilot-delivery-checker__heading {
+	margin: 0 0 1.25rem;
+	color: #111827;
+	font-size: 1.125rem;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+/* Prompt state */
+
+.pizzapilot-delivery-checker__form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: center;
+}
+
+.pizzapilot-delivery-checker__input {
+	flex: 1 1 12rem;
+	min-width: 0;
+	padding: 0.625rem 0.75rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.375rem;
+	background: #fff;
+	color: #111827;
+	font: inherit;
+	text-transform: uppercase;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pizzapilot-delivery-checker__input::placeholder {
+	color: #9ca3af;
+	text-transform: none;
+}
+
+.pizzapilot-delivery-checker__input:focus,
+.pizzapilot-delivery-checker__input:focus-visible {
+	outline: none;
+	border-color: #2563eb;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.pizzapilot-delivery-checker__input:disabled {
+	background: #f3f4f6;
+	color: #6b7280;
+	cursor: not-allowed;
+}
+
+.pizzapilot-delivery-checker__submit,
+.pizzapilot-delivery-checker__reset {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 2.625rem;
+	padding: 0.625rem 1.25rem;
+	border: 0;
+	border-radius: 0.375rem;
+	background: #111827;
+	color: #fff;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.pizzapilot-delivery-checker__submit:hover,
+.pizzapilot-delivery-checker__submit:focus-visible,
+.pizzapilot-delivery-checker__reset:hover,
+.pizzapilot-delivery-checker__reset:focus-visible {
+	background: #374151;
+	outline: none;
+}
+
+.pizzapilot-delivery-checker__submit:focus-visible,
+.pizzapilot-delivery-checker__reset:focus-visible {
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+}
+
+.pizzapilot-delivery-checker__submit:active,
+.pizzapilot-delivery-checker__reset:active {
+	transform: translateY(1px);
+}
+
+.pizzapilot-delivery-checker__submit:disabled {
+	cursor: progress;
+	opacity: 0.85;
+}
+
+/* Loading spinner — replaces the submit label while aria-busy="true". */
+
+.pizzapilot-delivery-checker__submit[aria-busy="true"] {
+	position: relative;
+	color: transparent;
+	pointer-events: none;
+}
+
+.pizzapilot-delivery-checker__submit[aria-busy="true"]::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 1.125rem;
+	height: 1.125rem;
+	margin: -0.5625rem 0 0 -0.5625rem;
+	border: 2px solid #fff;
+	border-right-color: transparent;
+	border-radius: 50%;
+	animation: pizzapilot-delivery-checker-spin 0.6s linear infinite;
+}
+
+.pizzapilot-delivery-checker__error {
+	margin: 0.875rem 0 0;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.375rem;
+	background: rgba(185, 28, 28, 0.08);
+	color: #b91c1c;
+	font-size: 0.9375rem;
+	line-height: 1.4;
+}
+
+.pizzapilot-delivery-checker__error[hidden] {
+	display: none;
+}
+
+/* Success / failure states */
+
+.pizzapilot-delivery-checker__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 4rem;
+	height: 4rem;
+	margin: 0 auto 1rem;
+	border-radius: 50%;
+	line-height: 0;
+}
+
+.pizzapilot-delivery-checker__icon--success {
+	background: rgba(22, 163, 74, 0.12);
+	color: #16a34a;
+}
+
+.pizzapilot-delivery-checker__icon--failure {
+	background: rgba(185, 28, 28, 0.12);
+	color: #b91c1c;
+}
+
+.pizzapilot-delivery-checker__message {
+	margin: 0 0 1.25rem;
+	color: #111827;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------------
+ * Screen-reader-only label fallback for themes without a global helper.
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker .screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+	white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Animations — only run on appear (via :not([hidden])).
+ * ------------------------------------------------------------------------- */
+
+.pizzapilot-delivery-checker__modal:not([hidden]) {
+	animation: pizzapilot-delivery-checker-fade-in 0.18s ease-out;
+}
+
+.pizzapilot-delivery-checker__modal:not([hidden]) .pizzapilot-delivery-checker__panel {
+	animation: pizzapilot-delivery-checker-pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pizzapilot-delivery-checker-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes pizzapilot-delivery-checker-pop-in {
+	from {
+		opacity: 0;
+		transform: scale(0.96) translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes pizzapilot-delivery-checker-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile tweaks
+ * ------------------------------------------------------------------------- */
+
+@media (max-width: 30rem) {
+	.pizzapilot-delivery-checker__panel {
+		padding: 2rem 1rem 1.25rem;
+		border-radius: 0.5rem;
+	}
+
+	.pizzapilot-delivery-checker__form {
+		flex-direction: column;
+	}
+
+	.pizzapilot-delivery-checker__submit,
+	.pizzapilot-delivery-checker__reset {
+		width: 100%;
+	}
+
+	.pizzapilot-delivery-checker__close {
+		width: 2.75rem;
+		height: 2.75rem;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion — kill all transitions, animations, and the loading spin.
+ * ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.pizzapilot-delivery-checker__trigger,
+	.pizzapilot-delivery-checker__close,
+	.pizzapilot-delivery-checker__input,
+	.pizzapilot-delivery-checker__submit,
+	.pizzapilot-delivery-checker__reset {
+		transition: none;
+	}
+
+	.pizzapilot-delivery-checker__modal:not([hidden]),
+	.pizzapilot-delivery-checker__modal:not([hidden]) .pizzapilot-delivery-checker__panel {
+		animation: none;
+	}
+
+	.pizzapilot-delivery-checker__submit[aria-busy="true"] {
+		color: inherit;
+	}
+
+	.pizzapilot-delivery-checker__submit[aria-busy="true"]::after {
+		display: none;
+	}
+}

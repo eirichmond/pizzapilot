@@ -4,7 +4,14 @@
 **Author:** Business in a Pizza Box
 **Platform:** WordPress + WooCommerce
 **Model:** Freemium (Free core plugin + Pro addon plugin)
-**Last Updated:** 2026-04-07
+**Last Updated:** 2026-04-27
+
+> **Status snapshot (Free):** Feature-complete. All PRD-listed free-version features
+> are implemented and verified in source. Remaining work is limited to (a) trimming
+> or conditionalising the public asset enqueue (`public/css/pizzapilot-public.css`
+> still ships as an empty placeholder and public scripts/styles enqueue on every
+> front-end page) and (b) the WordPress.org release-readiness pass (PHPCS, smoke
+> tests, README validation). See `TASKS.md` for the full reconciled task list.
 
 ---
 
@@ -475,8 +482,8 @@ vendor/bin/phpcbf --standard=WordPress /path/to/file.php
 
 | Phase | Deliverable | Status |
 |-------|-------------|--------|
-| Phase 1 | Build Free plugin with core slot & radius functionality | In Progress |
-| Phase 2 | Develop Pro plugin with future ordering and slot caps | Planned |
+| Phase 1 | Build Free plugin with core slot & radius functionality | Feature-complete (release-readiness pass outstanding) |
+| Phase 2 | Develop Pro plugin with future ordering and slot caps | In progress (see Pro plugin docs) |
 | Phase 3 | Add driver tools, drag-and-drop kitchen queue | Planned |
 | Phase 4 | Introduce SMS/email notifications as optional module | Planned |
 
