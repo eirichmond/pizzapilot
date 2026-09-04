@@ -10,6 +10,10 @@
  * @subpackage Pizzapilot/public
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -164,6 +168,12 @@ class Pizzapilot_Public {
 	 * @return   void
 	 */
 	public function pizzapilot_register_checkout_fields() {
+		// The Additional Checkout Fields API is only available in newer
+		// WooCommerce releases. Bail rather than fatal on older versions.
+		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+			return;
+		}
+
 		$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
 		$slots    = $settings->get_formatted_delivery_slots();
 

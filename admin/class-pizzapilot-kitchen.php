@@ -9,6 +9,10 @@
  * @subpackage Pizzapilot/admin
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Kitchen order interface for viewing and managing orders grouped by time slot.
  *
@@ -148,8 +152,8 @@ class PizzaPilot_Kitchen {
 			echo '<p>' . esc_html__( 'No orders for today.', 'pizzapilot' ) . '</p>';
 			echo '</div>';
 		} else {
-			foreach ( $grouped_orders as $slot_label => $orders ) {
-				$this->render_slot_group( $slot_label, $orders );
+			foreach ( $grouped_orders as $group ) {
+				$this->render_slot_group( $group['label'], $group['orders'] );
 			}
 		}
 
@@ -167,8 +171,25 @@ class PizzaPilot_Kitchen {
 	private function render_slot_group( $slot_label, $orders ) {
 		$order_count = count( $orders );
 
+		// Derive the slot date from the first order's delivery-time meta so the
+		// heading reflects the actual stored slot, not "today".
+		$slot_date = '';
+		if ( ! empty( $orders ) ) {
+			$first_order   = reset( $orders );
+			$delivery_time = $first_order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
+			if ( empty( $delivery_time ) ) {
+				$delivery_time = $first_order->get_meta( '_pizzapilot_delivery_time', true );
+			}
+			if ( ! empty( $delivery_time ) && is_numeric( $delivery_time ) ) {
+				$slot_date = wp_date( 'D jS M', (int) $delivery_time );
+			}
+		}
+
 		echo '<div class="pizzapilot-slot-group">';
 		echo '<h2 class="pizzapilot-slot-heading">';
+		if ( '' !== $slot_date ) {
+			echo '<span class="pizzapilot-slot-date">' . esc_html( $slot_date ) . '</span> ';
+		}
 		echo esc_html( $slot_label );
 		echo ' <span class="pizzapilot-slot-count">';
 		echo '(' . esc_html(
@@ -402,11 +423,14 @@ class PizzaPilot_Kitchen {
 		$day_end   = (int) $date_obj->setTime( 23, 59, 59 )->format( 'U' );
 
 		// Query orders with PizzaPilot delivery time within today's range.
+		// meta_query/meta_key are required here: WooCommerce stores the slot
+		// timestamp as order meta, and the kitchen view is admin-only and
+		// scoped to a single day, so the result set is small.
 		$orders = wc_get_orders(
 			array(
 				'limit'      => -1,
 				'status'     => array( 'wc-processing', 'wc-on-hold', 'wc-completed' ),
-				'meta_query' => array(
+				'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					'relation' => 'OR',
 					array(
 						'key'     => '_wc_other/pizzapilot/delivery-time',
@@ -422,13 +446,12 @@ class PizzaPilot_Kitchen {
 					),
 				),
 				'orderby'    => 'meta_value_num',
-				'meta_key'   => '_wc_other/pizzapilot/delivery-time',
+				'meta_key'   => '_wc_other/pizzapilot/delivery-time', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'order'      => 'ASC',
 			)
 		);
 
-		$grouped    = array();
-		$slot_times = array();
+		$groups = array();
 
 		foreach ( $orders as $order ) {
 			$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
@@ -440,6 +463,7 @@ class PizzaPilot_Kitchen {
 				continue;
 			}
 
+			$delivery_time = (int) $delivery_time;
 			$slot_datetime = new DateTime( '@' . $delivery_time );
 			$slot_datetime->setTimezone( $timezone );
 
@@ -448,30 +472,29 @@ class PizzaPilot_Kitchen {
 
 			$slot_label = $slot_datetime->format( 'g:i A' ) . ' - ' . $end_datetime->format( 'g:i A' );
 
-			if ( ! isset( $grouped[ $slot_label ] ) ) {
-				$grouped[ $slot_label ]    = array();
-				$slot_times[ $slot_label ] = (int) $delivery_time;
+			// Key groups by the full slot start (date + time) so identical
+			// times on different dates do not collapse into one group.
+			$group_key = $slot_datetime->format( 'YmdHi' );
+
+			if ( ! isset( $groups[ $group_key ] ) ) {
+				$groups[ $group_key ] = array(
+					'timestamp' => $delivery_time,
+					'label'     => $slot_label,
+					'orders'    => array(),
+				);
 			}
 
-			$grouped[ $slot_label ][] = $order;
+			$groups[ $group_key ]['orders'][] = $order;
 		}
 
-		// Sort slot groups by time-of-day (hour and minute).
-		uksort(
-			$grouped,
-			function ( $a, $b ) use ( $slot_times, $timezone ) {
-				$dt_a = new DateTime( '@' . $slot_times[ $a ] );
-				$dt_a->setTimezone( $timezone );
-				$dt_b = new DateTime( '@' . $slot_times[ $b ] );
-				$dt_b->setTimezone( $timezone );
-
-				$minutes_a = (int) $dt_a->format( 'H' ) * 60 + (int) $dt_a->format( 'i' );
-				$minutes_b = (int) $dt_b->format( 'H' ) * 60 + (int) $dt_b->format( 'i' );
-
-				return $minutes_a - $minutes_b;
+		// Sort groups by the full slot timestamp (date + time) ASC.
+		uasort(
+			$groups,
+			function ( $a, $b ) {
+				return $a['timestamp'] <=> $b['timestamp'];
 			}
 		);
 
-		return $grouped;
+		return $groups;
 	}
 }

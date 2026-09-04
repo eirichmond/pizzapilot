@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * The file that defines the core plugin class
  *
@@ -13,6 +11,10 @@
  * @package    Pizzapilot
  * @subpackage Pizzapilot/includes
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * The core plugin class.
@@ -76,7 +78,6 @@ class Pizzapilot {
 		$this->plugin_name = 'pizzapilot';
 
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_settings_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -88,7 +89,6 @@ class Pizzapilot {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Pizzapilot_Loader. Orchestrates the hooks of the plugin.
-	 * - Pizzapilot_I18n. Defines internationalization functionality.
 	 * - Pizzapilot_Admin. Defines all hooks for the admin area.
 	 * - Pizzapilot_Public. Defines all hooks for the public side of the site.
 	 *
@@ -105,12 +105,6 @@ class Pizzapilot {
 		 * core plugin.
 		 */
 		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the settings area.
@@ -149,22 +143,6 @@ class Pizzapilot {
 		require_once PIZZAPILOT_PLUGIN_DIR . 'includes/class-pizzapilot-blocks.php';
 
 		$this->loader = new Pizzapilot_Loader();
-	}
-
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the Pizzapilot_I18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale() {
-
-		$plugin_i18n = new Pizzapilot_I18n();
-
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**

@@ -12,6 +12,10 @@
  * @subpackage Pizzapilot/admin
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Pro feature teaser class.
  *
@@ -109,7 +113,7 @@ class PizzaPilot_Pro_Teasers {
 	 * @return   void
 	 */
 	public function render_upgrade_page() {
-		$upgrade_url = 'https://pizzapilot.co.uk/pricing/';
+		$upgrade_url = 'https://pizzapilotpro.com/pricing/';
 
 		?>
 		<div class="wrap pizzapilot-upgrade-wrap">
@@ -227,6 +231,6 @@ class PizzaPilot_Pro_Teasers {
 	 * @return   string    External URL to pricing page.
 	 */
 	public static function get_upgrade_url() {
-		return 'https://pizzapilot.co.uk/pricing/';
+		return 'https://pizzapilotpro.com/pricing/';
 	}
 }
