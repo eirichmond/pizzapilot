@@ -17,6 +17,11 @@
  * Plugin URI:        https://elliottrichmond.co.uk
  * Description:       PizzaPilot is designed to help small pizzerias set up time slot-based ordering and delivery radius checks within WooCommerce. It includes a basic frontend and backend interface for order management during kitchen hours
  * Version:           1.2.0
+ * Requires at least: 6.3
+ * Requires PHP:      7.2
+ * Requires Plugins:  woocommerce
+ * WC requires at least: 8.9
+ * WC tested up to: 10.6
  * Author:            Elliott Richmond
  * Author URI:        https://elliottrichmond.co.uk/
  * License:           GPL-2.0+

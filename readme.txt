@@ -1,8 +1,8 @@
 === PizzaPilot ===
 Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
-Requires at least: 5.0
-Tested up to: 6.7
+Requires at least: 6.3
+Tested up to: 7.1
 Stable tag: 1.2.0
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -24,7 +24,22 @@ PizzaPilot helps local pizzerias manage delivery and collection orders through W
 
 PizzaPilot uses the WooCommerce Additional Checkout Fields API for seamless integration with the checkout flow.
 
-**PizzaPilot Pro** extends the free version with future date ordering, slot capacity limits, recurring slot templates, interactive Mapbox delivery maps with What3Words, drag-and-drop kitchen UI, and more. [Learn more](https://pizzapilot.co.uk/pricing/).
+**PizzaPilot Pro** extends the free version with future date ordering, slot capacity limits, recurring slot templates, interactive Mapbox delivery maps with What3Words, drag-and-drop kitchen UI, and more. [Learn more](https://pizzapilotpro.com/pricing/).
+
+== External Services ==
+
+This plugin connects to the postcodes.io API to convert UK postcodes into geographic coordinates. This is required to calculate the distance between your store and a customer's address, which is how the delivery radius check works.
+
+**What is sent, and when:**
+
+* A single UK postcode is sent to `https://api.postcodes.io/postcodes/{postcode}` each time a delivery radius check runs. No other customer data (name, address, email, order contents) is transmitted.
+* This happens when a customer enters a postcode at checkout, when a customer uses the Delivery Postcode Checker block, and when your configured store postcode is looked up for the distance calculation.
+* Results are cached in WordPress transients so that repeat lookups of the same postcode do not re-contact the service.
+
+No API key or account is required, and the plugin sends no data to the service unless a postcode check is actually performed.
+
+Service: https://postcodes.io/
+Source code and licence (MIT): https://github.com/ideal-postcodes/postcodes.io
 
 == Installation ==
 
@@ -37,7 +52,9 @@ PizzaPilot uses the WooCommerce Additional Checkout Fields API for seamless inte
 
 = Does this plugin require WooCommerce? =
 
-Yes. PizzaPilot requires WooCommerce 3.0 or later to be installed and active.
+Yes. PizzaPilot requires WooCommerce 8.9 or later to be installed and active. Slot selection is built on
+WooCommerce's Additional Checkout Fields API, which is not available in earlier releases. On an older
+WooCommerce the plugin will load but the checkout fields will not be registered.
 
 = How are delivery slots generated? =
 
