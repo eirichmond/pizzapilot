@@ -16,6 +16,10 @@
  * @subpackage Pizzapilot/admin
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * The admin-specific functionality of the plugin.
  *

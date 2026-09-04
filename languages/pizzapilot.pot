@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: PizzaPilot 1.0.0\n"
+"Project-Id-Version: PizzaPilot 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pizzapilot\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-08T14:14:28+00:00\n"
+"POT-Creation-Date: 2026-09-02T16:36:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pizzapilot\n"
@@ -17,8 +17,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #: pizzapilot.php
 #: pizzapilot.php:78
-#: settings/class-pizzapilot-settings.php:74
-#: settings/class-pizzapilot-settings.php:75
+#: settings/class-pizzapilot-settings.php:78
+#: settings/class-pizzapilot-settings.php:79
 msgid "PizzaPilot"
 msgstr ""
 
@@ -42,58 +42,75 @@ msgstr ""
 msgid "https://elliottrichmond.co.uk/"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:140
+#: admin/class-pizzapilot-admin.php:141
 msgid "PizzaPilot Delivery Details"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:143
+#: admin/class-pizzapilot-admin.php:144
 msgid "Delivery Type:"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:151
+#: admin/class-pizzapilot-admin.php:152
 msgid "Delivery Time:"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:169
+#: admin/class-pizzapilot-admin.php:170
 msgid "Not set"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:272
+#: admin/class-pizzapilot-admin.php:273
 msgid "Delivery Slot"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:381
-#: settings/class-pizzapilot-settings.php:87
+#: admin/class-pizzapilot-admin.php:382
+#: settings/class-pizzapilot-settings.php:91
 msgid "Settings"
 msgstr ""
 
-#: admin/class-pizzapilot-admin.php:385
-#: admin/class-pizzapilot-pro-teasers.php:73
-#: admin/class-pizzapilot-pro-teasers.php:74
-#: settings/class-pizzapilot-settings.php:666
+#: admin/class-pizzapilot-admin.php:386
+#: admin/class-pizzapilot-pro-teasers.php:77
+#: admin/class-pizzapilot-pro-teasers.php:78
+#: settings/class-pizzapilot-settings.php:723
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:63
-#: admin/class-pizzapilot-kitchen.php:64
-#: admin/class-pizzapilot-kitchen.php:104
+#: admin/class-pizzapilot-kitchen.php:67
+#: admin/class-pizzapilot-kitchen.php:68
+#: admin/class-pizzapilot-kitchen.php:115
+#: admin/class-pizzapilot-kitchen.php:139
 msgid "Kitchen Orders"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:109
+#: admin/class-pizzapilot-kitchen.php:117
+msgid "This page shows today's orders grouped by delivery time slot."
+msgstr ""
+
+#: admin/class-pizzapilot-kitchen.php:119
+msgid "Each card shows the customer name, delivery type, and ordered items."
+msgstr ""
+
+#: admin/class-pizzapilot-kitchen.php:120
+msgid "Click \"Mark Completed\" to flag an order as done. Completed orders are dimmed."
+msgstr ""
+
+#: admin/class-pizzapilot-kitchen.php:121
+msgid "Use the Refresh button to reload orders — the page does not auto-update."
+msgstr ""
+
+#: admin/class-pizzapilot-kitchen.php:144
 msgid "Orders for today, grouped by time slot."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:111
+#: admin/class-pizzapilot-kitchen.php:146
 msgid "Refresh"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:117
+#: admin/class-pizzapilot-kitchen.php:152
 msgid "No orders for today."
 msgstr ""
 
 #. translators: %d: number of orders
-#: admin/class-pizzapilot-kitchen.php:146
+#: admin/class-pizzapilot-kitchen.php:198
 #, php-format
 msgid "%d order"
 msgid_plural "%d orders"
@@ -101,205 +118,244 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: order number
-#: admin/class-pizzapilot-kitchen.php:190
+#: admin/class-pizzapilot-kitchen.php:242
 #, php-format
 msgid "Order #%d"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:235
+#: admin/class-pizzapilot-kitchen.php:287
 msgid "Mark Incomplete"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:239
+#: admin/class-pizzapilot-kitchen.php:291
 msgid "Mark Completed"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:254
+#: admin/class-pizzapilot-kitchen.php:306
 msgid "Invalid request."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:260
-#: admin/class-pizzapilot-kitchen.php:348
+#: admin/class-pizzapilot-kitchen.php:312
+#: admin/class-pizzapilot-kitchen.php:400
 msgid "Security check failed."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:264
+#: admin/class-pizzapilot-kitchen.php:316
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:269
+#: admin/class-pizzapilot-kitchen.php:321
 msgid "Order not found."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:327
+#: admin/class-pizzapilot-kitchen.php:379
+#: settings/class-pizzapilot-settings.php:146
 msgid "PizzaPilot Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:328
+#: admin/class-pizzapilot-kitchen.php:380
 msgid "Upgrade for live-updating orders, drag-and-drop reordering, and kitchen ticket printing."
 msgstr ""
 
-#: admin/class-pizzapilot-kitchen.php:329
+#: admin/class-pizzapilot-kitchen.php:381
 msgid "Learn more"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:116
+#: admin/class-pizzapilot-pro-teasers.php:120
 msgid "Upgrade to PizzaPilot Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:120
+#: admin/class-pizzapilot-pro-teasers.php:124
 msgid "Take your pizzeria to the next level with advanced ordering, kitchen management, and delivery tools."
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:123
+#: admin/class-pizzapilot-pro-teasers.php:127
 msgid "Get PizzaPilot Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:128
+#: admin/class-pizzapilot-pro-teasers.php:132
 msgid "Free vs Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:133
+#: admin/class-pizzapilot-pro-teasers.php:137
 msgid "Feature"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:134
+#: admin/class-pizzapilot-pro-teasers.php:138
 msgid "Free"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:135
+#: admin/class-pizzapilot-pro-teasers.php:139
 msgid "Pro"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:155
+#: admin/class-pizzapilot-pro-teasers.php:159
 msgid "Upgrade Now"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:171
+#: admin/class-pizzapilot-pro-teasers.php:175
 msgid "Time Slot Scheduling"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:172
-#: settings/class-pizzapilot-settings.php:634
+#: admin/class-pizzapilot-pro-teasers.php:176
+#: settings/class-pizzapilot-settings.php:691
 msgid "Same-day only"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:173
+#: admin/class-pizzapilot-pro-teasers.php:177
 msgid "Future dates, auto-generation, recurring"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:176
+#: admin/class-pizzapilot-pro-teasers.php:180
 msgid "Slot Capacity"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:177
+#: admin/class-pizzapilot-pro-teasers.php:181
 msgid "Unlimited"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:178
+#: admin/class-pizzapilot-pro-teasers.php:182
 msgid "Set limits by order count or pizza qty"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:181
-#: settings/class-pizzapilot-settings.php:245
+#: admin/class-pizzapilot-pro-teasers.php:185
+#: settings/class-pizzapilot-settings.php:130
+#: settings/class-pizzapilot-settings.php:302
 msgid "Delivery Radius"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:182
+#: admin/class-pizzapilot-pro-teasers.php:186
 msgid "Single postcode, fixed radius"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:183
+#: admin/class-pizzapilot-pro-teasers.php:187
 msgid "Multiple origins, variable radii, overrides"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:186
+#: admin/class-pizzapilot-pro-teasers.php:190
 msgid "Geocoding"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:187
+#: admin/class-pizzapilot-pro-teasers.php:191
 msgid "UK postcodes (postcodes.io)"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:188
+#: admin/class-pizzapilot-pro-teasers.php:192
 msgid "Global (Google Maps API)"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:191
+#: admin/class-pizzapilot-pro-teasers.php:195
 msgid "Delivery Maps"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:193
+#: admin/class-pizzapilot-pro-teasers.php:197
 msgid "Interactive Mapbox maps with What3Words"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:196
+#: admin/class-pizzapilot-pro-teasers.php:200
 msgid "Kitchen UI"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:197
+#: admin/class-pizzapilot-pro-teasers.php:201
 msgid "Order cards with completion toggle"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:198
+#: admin/class-pizzapilot-pro-teasers.php:202
 msgid "Live queue, drag & drop, ticket printing"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:201
+#: admin/class-pizzapilot-pro-teasers.php:205
 msgid "Driver Tools"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:203
+#: admin/class-pizzapilot-pro-teasers.php:207
 msgid "Delivery interface with maps and navigation"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:206
+#: admin/class-pizzapilot-pro-teasers.php:210
 msgid "Notifications"
 msgstr ""
 
-#: admin/class-pizzapilot-pro-teasers.php:208
+#: admin/class-pizzapilot-pro-teasers.php:212
 msgid "SMS and email order updates"
 msgstr ""
 
-#: includes/class-pizzapilot-delivery-checker.php:65
+#: blocks/delivery-checker/render.php:39
+msgid "Check delivery to your postcode"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:40
+msgid "Close"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:41
+msgid "Insert your postcode to check that we can deliver in your area."
+msgstr ""
+
+#: blocks/delivery-checker/render.php:42
+msgid "Postcode"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:43
+msgctxt "postcode input placeholder"
+msgid "e.g. SW1A 1AA"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:44
+msgid "Check"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:45
+msgid "Yes, we are delivering in your area!"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:46
+msgid "Sorry! We can't deliver in your area but, you can choose to collect at the checkout"
+msgstr ""
+
+#: blocks/delivery-checker/render.php:47
+msgid "Check another postcode"
+msgstr ""
+
+#: includes/class-pizzapilot-delivery-checker.php:70
 msgid "Please enter a postcode."
 msgstr ""
 
-#: includes/class-pizzapilot-delivery-checker.php:77
+#: includes/class-pizzapilot-delivery-checker.php:84
 msgid "Delivery postcode not configured. Please contact the store."
 msgstr ""
 
-#: includes/class-pizzapilot-delivery-checker.php:86
-#: includes/class-pizzapilot-delivery-checker.php:304
-#: includes/class-pizzapilot-delivery-checker.php:372
+#: includes/class-pizzapilot-delivery-checker.php:95
+#: includes/class-pizzapilot-delivery-checker.php:318
+#: includes/class-pizzapilot-delivery-checker.php:386
 msgid "We could not verify your postcode. Please check it and try again."
 msgstr ""
 
 #. translators: 1: distance, 2: unit (km/miles)
-#: includes/class-pizzapilot-delivery-checker.php:98
+#: includes/class-pizzapilot-delivery-checker.php:109
 #, php-format
 msgid "Great! We deliver to your area (approximately %1$s %2$s away)."
 msgstr ""
 
 #. translators: 1: distance, 2: unit (km/miles)
-#: includes/class-pizzapilot-delivery-checker.php:110
+#: includes/class-pizzapilot-delivery-checker.php:123
 #, php-format
 msgid "Sorry, your postcode is outside our delivery area (approximately %1$s %2$s away). Please select \"Collection\" instead."
 msgstr ""
 
-#: includes/class-pizzapilot-delivery-checker.php:283
-#: includes/class-pizzapilot-delivery-checker.php:351
+#: includes/class-pizzapilot-delivery-checker.php:297
+#: includes/class-pizzapilot-delivery-checker.php:365
 msgid "Postcode is required for delivery orders."
 msgstr ""
 
-#: includes/class-pizzapilot-delivery-checker.php:294
-#: includes/class-pizzapilot-delivery-checker.php:363
+#: includes/class-pizzapilot-delivery-checker.php:308
+#: includes/class-pizzapilot-delivery-checker.php:377
 msgid "Delivery is not available at this time. Please contact the store."
 msgstr ""
 
 #. translators: %s: postcode
-#: includes/class-pizzapilot-delivery-checker.php:315
-#: includes/class-pizzapilot-delivery-checker.php:381
+#: includes/class-pizzapilot-delivery-checker.php:329
+#: includes/class-pizzapilot-delivery-checker.php:395
 #, php-format
 msgid "Sorry, we cannot deliver to postcode %s. Please select \"Collection\" instead."
 msgstr ""
@@ -326,196 +382,266 @@ msgstr ""
 msgid "to get started."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:138
+#: public/class-pizzapilot-public.php:186
 msgid "Delivery Options"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:142
+#: public/class-pizzapilot-public.php:190
 msgid "Select a delivery type"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:146
-#: settings/class-pizzapilot-settings.php:116
+#: public/class-pizzapilot-public.php:194
+#: settings/class-pizzapilot-settings.php:125
+#: settings/class-pizzapilot-settings.php:173
 msgid "Delivery"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:150
+#: public/class-pizzapilot-public.php:198
 msgid "Collect"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:159
+#: public/class-pizzapilot-public.php:207
 msgid "Delivery Time"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:163
+#: public/class-pizzapilot-public.php:211
 msgid "Select a time"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:185
+#: public/class-pizzapilot-public.php:235
 msgid "Please select a delivery type."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:190
+#: public/class-pizzapilot-public.php:240
 msgid "Please select a delivery time slot."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:199
+#: public/class-pizzapilot-public.php:249
 msgid "The selected time slot is no longer available. Please select a different time."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:86
-#: settings/class-pizzapilot-settings.php:109
+#: settings/class-pizzapilot-settings.php:90
+#: settings/class-pizzapilot-settings.php:166
 msgid "PizzaPilot Settings"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:113
+#: settings/class-pizzapilot-settings.php:117
+#: settings/class-pizzapilot-settings.php:170
 msgid "General"
 msgstr ""
 
+#: settings/class-pizzapilot-settings.php:118
+msgid "The General tab lets you enable or disable PizzaPilot. When disabled, the time slot selector and delivery radius checker will not appear at checkout."
+msgstr ""
+
 #: settings/class-pizzapilot-settings.php:127
-msgid "Advanced"
+msgid "Configure your delivery settings:"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:214
-msgid "General Settings"
-msgstr ""
-
-#: settings/class-pizzapilot-settings.php:221
-msgid "Enable PizzaPilot"
-msgstr ""
-
-#: settings/class-pizzapilot-settings.php:230
-msgid "Delivery Settings"
-msgstr ""
-
-#: settings/class-pizzapilot-settings.php:237
+#: settings/class-pizzapilot-settings.php:129
+#: settings/class-pizzapilot-settings.php:294
 msgid "Delivery Postcode"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:253
-msgid "Radius Unit"
+#: settings/class-pizzapilot-settings.php:129
+msgid "Your store's postcode, used as the origin for distance calculations."
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:130
+msgid "Maximum distance for delivery orders. Customers outside this radius can only select Collection."
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:131
+msgid "Start / End Time"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:131
+msgid "The window during which 30-minute delivery slots are generated for today."
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:139
+#: settings/class-pizzapilot-settings.php:184
+msgid "Advanced"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:140
+msgid "The Advanced tab shows features that can be unlocked with PizzaPilot Pro, including future date ordering, slot capacity limits, recurring slot templates, and interactive delivery maps."
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:145
+msgid "For more information:"
 msgstr ""
 
 #: settings/class-pizzapilot-settings.php:271
+msgid "General Settings"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:278
+msgid "Enable PizzaPilot"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:287
+msgid "Delivery Settings"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:310
+msgid "Radius Unit"
+msgstr ""
+
+#: settings/class-pizzapilot-settings.php:328
 msgid "Delivery Start Time"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:289
+#: settings/class-pizzapilot-settings.php:346
 msgid "Delivery End Time"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:309
+#: settings/class-pizzapilot-settings.php:366
 msgid "Advanced Settings"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:316
+#: settings/class-pizzapilot-settings.php:373
 msgid "Same-Day Delivery Only"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:326
+#: settings/class-pizzapilot-settings.php:383
 msgid "Slot Capacity Limits"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:334
+#: settings/class-pizzapilot-settings.php:391
 msgid "Auto-Generated Recurring Slots"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:342
+#: settings/class-pizzapilot-settings.php:399
 msgid "Interactive Delivery Maps"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:487
+#: settings/class-pizzapilot-settings.php:544
 msgid "Configure the general settings for PizzaPilot."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:499
+#: settings/class-pizzapilot-settings.php:556
 msgid "Configure delivery-related settings."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:511
+#: settings/class-pizzapilot-settings.php:568
 msgid "Configure advanced settings and pro features."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:521
+#: settings/class-pizzapilot-settings.php:578
 msgid "Enable or disable the PizzaPilot plugin."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:530
+#: settings/class-pizzapilot-settings.php:587
 msgid "Enter the delivery from postcode."
 msgstr ""
 
 #. translators: %s: unit of measurement (km or miles)
-#: settings/class-pizzapilot-settings.php:542
+#: settings/class-pizzapilot-settings.php:599
 #, php-format
 msgid "Enter the delivery radius (%s)."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:553
+#: settings/class-pizzapilot-settings.php:610
 msgid "Kilometers"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:554
+#: settings/class-pizzapilot-settings.php:611
 msgid "Miles"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:556
+#: settings/class-pizzapilot-settings.php:613
 msgid "Select the unit for delivery radius."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:576
+#: settings/class-pizzapilot-settings.php:633
 msgid "Enter the delivery start time."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:580
-#: settings/class-pizzapilot-settings.php:609
+#: settings/class-pizzapilot-settings.php:637
+#: settings/class-pizzapilot-settings.php:666
 msgid "Pro: Custom time slots"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:582
-#: settings/class-pizzapilot-settings.php:611
+#: settings/class-pizzapilot-settings.php:639
+#: settings/class-pizzapilot-settings.php:668
 msgid "With PizzaPilot Pro, create individual time slots with custom durations, day-specific schedules, and auto-recurring patterns."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:605
+#: settings/class-pizzapilot-settings.php:662
 msgid "Enter the delivery end time."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:628
+#: settings/class-pizzapilot-settings.php:685
 msgid "Only allow same-day delivery orders."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:629
+#: settings/class-pizzapilot-settings.php:686
 msgid "Note: Changing this setting will require saving and refreshing the page to show/hide slot countdown options."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:636
+#: settings/class-pizzapilot-settings.php:693
 msgid "With PizzaPilot Pro, allow customers to select delivery dates up to 14 days in advance with a calendar date picker."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:658
+#: settings/class-pizzapilot-settings.php:715
 msgid "PRO"
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:679
+#: settings/class-pizzapilot-settings.php:736
 msgid "Set maximum orders or pizza quantities per time slot."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:680
+#: settings/class-pizzapilot-settings.php:737
 msgid "Slots auto-lock when capacity is reached. Separate limits for delivery vs collection."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:692
+#: settings/class-pizzapilot-settings.php:749
 msgid "Define slot templates that auto-generate on a schedule."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:693
+#: settings/class-pizzapilot-settings.php:750
 msgid "Create recurring patterns like \"Every Friday 5-8pm\" with day-specific variations."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:705
+#: settings/class-pizzapilot-settings.php:762
 msgid "Interactive Mapbox maps on checkout and admin pages."
 msgstr ""
 
-#: settings/class-pizzapilot-settings.php:706
+#: settings/class-pizzapilot-settings.php:763
 msgid "Customers pin their location on a map. Supports What3Words for precise delivery."
+msgstr ""
+
+#: blocks/delivery-checker/edit.js:38
+msgid "Delivery postcode checker preview unavailable."
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block title"
+msgid "Delivery Postcode Checker"
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block description"
+msgid "A button that opens a postcode checker modal so customers can verify if you deliver to their area."
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block keyword"
+msgid "pizza"
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block keyword"
+msgid "delivery"
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block keyword"
+msgid "postcode"
+msgstr ""
+
+#: blocks/delivery-checker/block.json
+msgctxt "block keyword"
+msgid "checker"
 msgstr ""

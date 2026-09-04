@@ -13,6 +13,10 @@
  * @subpackage Pizzapilot/includes
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Delivery radius checker class.
  *

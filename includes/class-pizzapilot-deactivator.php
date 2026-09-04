@@ -10,6 +10,10 @@
  * @subpackage Pizzapilot/includes
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Fired during plugin deactivation.
  *
