@@ -40,3 +40,7 @@ README.md
 
 # Composer
 vendor/
+
+# Plugin Check reports (generated)
+pizzapilot-plugin-checker.md
+pizzapilot-*-php-*.md
