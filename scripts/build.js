@@ -30,11 +30,20 @@ const EXCLUDE = [
 	'package-lock.json',
 	'tasks',
 	'scripts',
-	'PRD.md',
-	'CLAUDE.md',
-	'TASKS.md',
 	`${ PLUGIN_SLUG }.zip`,
 ];
+
+// All Markdown files are development docs and should not ship to WordPress.org.
+// readme.txt is the canonical WP.org readme and is kept.
+function isExcluded( name ) {
+	if ( EXCLUDE.includes( name ) ) {
+		return true;
+	}
+	if ( name.toLowerCase().endsWith( '.md' ) ) {
+		return true;
+	}
+	return false;
+}
 
 // Remove existing zip if present.
 if ( fs.existsSync( OUTPUT ) ) {
@@ -60,7 +69,7 @@ function addDirectory( dir, archivePath ) {
 	const entries = fs.readdirSync( dir, { withFileTypes: true } );
 
 	for ( const entry of entries ) {
-		if ( EXCLUDE.includes( entry.name ) ) {
+		if ( isExcluded( entry.name ) ) {
 			continue;
 		}
 
