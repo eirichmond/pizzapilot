@@ -20,6 +20,9 @@ const EXCLUDE = [
 	'.git',
 	'.gitignore',
 	'.claude',
+	// WordPress.org screenshots live in the SVN repo's /assets/ directory,
+	// never inside the plugin zip.
+	'.wordpress-org',
 	'.DS_Store',
 	'node_modules',
 	'vendor',
