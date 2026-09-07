@@ -1,6 +1,6 @@
 {
   "name": "pizzapilot",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "Slot-based delivery and collection ordering for WooCommerce",
   "private": true,
   "scripts": {
