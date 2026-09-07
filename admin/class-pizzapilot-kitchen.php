@@ -363,11 +363,16 @@ class PizzaPilot_Kitchen {
 		}
 
 		$upgrade_url = admin_url( 'admin.php?page=pizzapilot-upgrade' );
+		// No 'page' argument here, deliberately. wp-admin/admin.php renders the
+		// plugin page for a 'page' request and exits before it reaches the
+		// do_action( "admin_action_{$action}" ) dispatch further down the file,
+		// so including it meant handle_dismiss_kitchen_pro() never ran and the
+		// banner could never be dismissed. The handler redirects back to the
+		// kitchen page itself, so the argument was never needed.
 		$dismiss_url = wp_nonce_url(
 			add_query_arg(
 				array(
 					'action' => 'pizzapilot_dismiss_kitchen_pro',
-					'page'   => 'pizzapilot-kitchen',
 				),
 				admin_url( 'admin.php' )
 			),

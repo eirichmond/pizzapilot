@@ -484,9 +484,20 @@ class Pizzapilot_Settings {
 	 */
 	public function sanitize_advanced_settings( $input ) {
 		$sanitized = array();
-		// For checkboxes, we need to explicitly check if the key exists in the input
-		// If it doesn't exist, it means the checkbox was unchecked
-		$sanitized['same_day_only'] = isset( $input['same_day_only'] ) ? true : false;
+
+		if ( Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' ) ) {
+			// For checkboxes, we need to explicitly check if the key exists in the input
+			// If it doesn't exist, it means the checkbox was unchecked
+			$sanitized['same_day_only'] = isset( $input['same_day_only'] ) ? true : false;
+		} else {
+			// Without Pro the field renders disabled and checked, so a browser
+			// never submits it. Reading its absence as "unchecked" would store
+			// false while the UI shows it on and the plugin only ever does
+			// same-day - and Pro reads this key as its master switch, so the
+			// stored false would silently switch Pro into multi-day mode on
+			// upgrade. Same-day is the only mode free supports, so record it.
+			$sanitized['same_day_only'] = true;
+		}
 
 		/**
 		 * Allow Pro plugin to add its own sanitization
