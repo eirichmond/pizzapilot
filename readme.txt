@@ -88,6 +88,8 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * Fixed: on block checkout, an order could be placed with no delivery time when the shop had no slots available. WooCommerce rejects a select field with an empty options list, so the Delivery Time field was never registered and nothing validated it. A placeholder option now keeps the field registered and blocks checkout until a real slot is available.
 * Fixed: the Kitchen Orders page showed "No orders for today" on stores using classic checkout. The query ordered on the block checkout's meta key, which excluded every order that stored its slot under the classic key. Slot grouping is unchanged; the groups were already sorted in PHP.
 * Fixed: the "Pro: Custom time slots" hint on the Delivery settings tab ran on into its own tooltip text, because no stylesheet defined the tooltip classes. The tooltip now reveals on hover and keyboard focus, and honours reduced-motion preferences.
+* Fixed: the "Upgrade to PizzaPilot Pro" notice on the Kitchen Orders screen could not be dismissed. The dismiss link never reached its handler, so the notice returned on every page load.
+* Fixed: saving the Advanced settings tab recorded same-day delivery as switched off, even though the setting is shown as on and cannot be changed without PizzaPilot Pro. Sites that later installed Pro could find future-date ordering unexpectedly enabled.
 
 = 1.2.0 =
 * New: "Delivery Postcode Checker" block (woocommerce category) — icon-trigger modal that lets customers verify delivery to their postcode. Background and text colour controls in the block sidebar.
@@ -108,7 +110,7 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 == Upgrade Notice ==
 
 = 1.2.1 =
-Bug fix release. Prevents block checkout accepting an order with no delivery time, restores the Kitchen Orders page for stores on classic checkout, and fixes tooltip styling on the Delivery settings tab.
+Bug fix release. Prevents block checkout accepting an order with no delivery time, restores the Kitchen Orders page for stores on classic checkout, makes the kitchen Pro notice dismissable, corrects the stored same-day delivery setting, and fixes tooltip styling on the Delivery settings tab.
 
 = 1.2.0 =
 Adds the Delivery Postcode Checker block and a refactored, conditionally-enqueued public asset pipeline.
