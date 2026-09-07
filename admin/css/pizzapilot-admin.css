@@ -19,3 +19,61 @@
 	color: #fff;
 	vertical-align: middle;
 }
+/* Pro feature tooltip
+ *
+ * The settings screens wrap a short "Pro: ..." label around a nested
+ * .pizzapilot-tooltip-text element holding the longer explanation. Without
+ * these rules the explanation renders inline and runs straight on from the
+ * label ("Pro: Custom time slotsWith PizzaPilot Pro, ..."), so the hidden
+ * state below is required, not decorative.
+ */
+.pizzapilot-pro-tooltip {
+	position: relative;
+	display: inline-block;
+	font-weight: 600;
+	color: #2271b1;
+	cursor: help;
+	border-bottom: 1px dotted #2271b1;
+}
+
+.pizzapilot-tooltip-text {
+	position: absolute;
+	bottom: 125%;
+	left: 0;
+	z-index: 100;
+	visibility: hidden;
+	opacity: 0;
+	width: 260px;
+	padding: 8px 10px;
+	border-radius: 4px;
+	background: #1d2327;
+	color: #fff;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 1.5;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	transition: opacity 0.15s ease-in-out;
+}
+
+.pizzapilot-tooltip-text::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 16px;
+	border: 6px solid transparent;
+	border-top-color: #1d2327;
+}
+
+.pizzapilot-pro-tooltip:hover .pizzapilot-tooltip-text,
+.pizzapilot-pro-tooltip:focus .pizzapilot-tooltip-text,
+.pizzapilot-pro-tooltip:focus-within .pizzapilot-tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.pizzapilot-tooltip-text {
+		transition: none;
+	}
+}

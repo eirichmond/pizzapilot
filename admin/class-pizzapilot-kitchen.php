@@ -423,9 +423,20 @@ class PizzaPilot_Kitchen {
 		$day_end   = (int) $date_obj->setTime( 23, 59, 59 )->format( 'U' );
 
 		// Query orders with PizzaPilot delivery time within today's range.
-		// meta_query/meta_key are required here: WooCommerce stores the slot
-		// timestamp as order meta, and the kitchen view is admin-only and
-		// scoped to a single day, so the result set is small.
+		// meta_query is required here: WooCommerce stores the slot timestamp as
+		// order meta, and the kitchen view is admin-only and scoped to a single
+		// day, so the result set is small.
+		//
+		// The slot timestamp lives under one of two keys: block checkout stores
+		// it as '_wc_other/pizzapilot/delivery-time', classic checkout as
+		// '_pizzapilot_delivery_time'. Hence the OR.
+		//
+		// Deliberately no 'orderby' => 'meta_value_num' / 'meta_key' here.
+		// Setting them joins on that single meta key, which discards every
+		// order that carries only the other one - so a store on classic
+		// checkout saw an empty kitchen page. Ordering is not lost: the slot
+		// groups built below are sorted by timestamp with uasort(), and orders
+		// inside a group all share the same slot time anyway.
 		$orders = wc_get_orders(
 			array(
 				'limit'      => -1,
@@ -445,9 +456,6 @@ class PizzaPilot_Kitchen {
 						'type'    => 'NUMERIC',
 					),
 				),
-				'orderby'    => 'meta_value_num',
-				'meta_key'   => '_wc_other/pizzapilot/delivery-time', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'order'      => 'ASC',
 			)
 		);
 
