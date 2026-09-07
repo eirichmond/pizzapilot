@@ -186,6 +186,20 @@ class Pizzapilot_Public {
 			);
 		}
 
+		// WooCommerce rejects a select field with an empty options array and
+		// emits a _doing_it_wrong notice, which leaves the field unregistered.
+		// On block checkout an unregistered field means no required-field
+		// validation runs at all, so an order could be placed with no delivery
+		// slot. Registering a single empty-valued placeholder keeps the field
+		// present, and because '' is empty() WooCommerce's own required check
+		// blocks checkout for as long as the shop has no slots available.
+		if ( empty( $options ) ) {
+			$options[] = array(
+				'value' => '',
+				'label' => __( 'No delivery times are currently available', 'pizzapilot' ),
+			);
+		}
+
 		woocommerce_register_additional_checkout_field(
 			array(
 				'id'          => 'pizzapilot/delivery-type',

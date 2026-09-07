@@ -9,14 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-02T16:36:47+00:00\n"
+"POT-Creation-Date: 2026-09-07T15:48:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pizzapilot\n"
 
 #. Plugin Name of the plugin
 #: pizzapilot.php
-#: pizzapilot.php:78
+#: pizzapilot.php:83
 #: settings/class-pizzapilot-settings.php:78
 #: settings/class-pizzapilot-settings.php:79
 msgid "PizzaPilot"
@@ -366,57 +366,61 @@ msgstr ""
 msgid "Upgrade to %1$sPizzaPilot Pro%2$s for more advanced features."
 msgstr ""
 
-#: pizzapilot.php:79
+#: pizzapilot.php:84
 msgid "WooCommerce is required for PizzaPilot to work. Please install and activate WooCommerce."
 msgstr ""
 
-#: pizzapilot.php:96
+#: pizzapilot.php:101
 msgid "PizzaPilot activated!"
 msgstr ""
 
-#: pizzapilot.php:98
+#: pizzapilot.php:103
 msgid "Configure your settings"
 msgstr ""
 
-#: pizzapilot.php:100
+#: pizzapilot.php:105
 msgid "to get started."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:186
+#: public/class-pizzapilot-public.php:199
+msgid "No delivery times are currently available"
+msgstr ""
+
+#: public/class-pizzapilot-public.php:206
 msgid "Delivery Options"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:190
+#: public/class-pizzapilot-public.php:210
 msgid "Select a delivery type"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:194
+#: public/class-pizzapilot-public.php:214
 #: settings/class-pizzapilot-settings.php:125
 #: settings/class-pizzapilot-settings.php:173
 msgid "Delivery"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:198
+#: public/class-pizzapilot-public.php:218
 msgid "Collect"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:207
+#: public/class-pizzapilot-public.php:227
 msgid "Delivery Time"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:211
+#: public/class-pizzapilot-public.php:231
 msgid "Select a time"
 msgstr ""
 
-#: public/class-pizzapilot-public.php:235
+#: public/class-pizzapilot-public.php:255
 msgid "Please select a delivery type."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:240
+#: public/class-pizzapilot-public.php:260
 msgid "Please select a delivery time slot."
 msgstr ""
 
-#: public/class-pizzapilot-public.php:249
+#: public/class-pizzapilot-public.php:269
 msgid "The selected time slot is no longer available. Please select a different time."
 msgstr ""
 
