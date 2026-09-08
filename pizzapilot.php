@@ -21,7 +21,7 @@
  * Requires PHP:      7.2
  * Requires Plugins:  woocommerce
  * WC requires at least: 8.9
- * WC tested up to: 10.6
+ * WC tested up to: 11.1
  * Author:            Elliott Richmond
  * Author URI:        https://elliottrichmond.co.uk/
  * License:           GPL-2.0+
