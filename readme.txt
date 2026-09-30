@@ -85,6 +85,7 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 == Changelog ==
 
 = 1.2.2 =
+* Changed: "Mark Completed" on the Kitchen Orders page now also sets the WooCommerce order status to Completed, and the order drops out of the kitchen view. Unmarking it returns the order to Processing. The kitchen view now lists only Processing and On hold orders.
 * Changed: the Advanced settings tab now describes same-day ordering in plain text with a link to PizzaPilot Pro, instead of showing a checkbox that could not be changed.
 * Improved: admin JavaScript now loads only on the WooCommerce order edit screens, from its own file rather than inline.
 * Improved: all inline styles moved into the plugin's stylesheets.
@@ -117,7 +118,7 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 == Upgrade Notice ==
 
 = 1.2.2 =
-Housekeeping release for WordPress.org guidelines: no inline scripts or styles, and no locked settings in the free plugin. No change to checkout behaviour.
+"Mark Completed" on the Kitchen Orders page now also completes the WooCommerce order, which may send the customer WooCommerce's order-completed email if that email is enabled. Also fixes the Kitchen Orders date filter on stores not using High-Performance Order Storage, and removes inline scripts, inline styles and the locked same-day setting to meet WordPress.org guidelines. No change to checkout behaviour.
 
 = 1.2.1 =
 Bug fix release. Prevents block checkout accepting an order with no delivery time, restores the Kitchen Orders page for stores on classic checkout, makes the kitchen Pro notice dismissable, corrects the stored same-day delivery setting, and fixes tooltip styling on the Delivery settings tab.
