@@ -376,7 +376,7 @@ class Pizzapilot_Settings {
 			'pizzapilot_advanced'
 		);
 
-		// Show greyed-out Pro feature previews when Pro is not active.
+		// Describe Pro features (text and upgrade link only) when Pro is not active.
 		if ( ! $pro_active ) {
 			add_settings_field(
 				'pizzapilot_slot_capacity_pro',
@@ -490,12 +490,12 @@ class Pizzapilot_Settings {
 			// If it doesn't exist, it means the checkbox was unchecked
 			$sanitized['same_day_only'] = isset( $input['same_day_only'] ) ? true : false;
 		} else {
-			// Without Pro the field renders disabled and checked, so a browser
-			// never submits it. Reading its absence as "unchecked" would store
-			// false while the UI shows it on and the plugin only ever does
-			// same-day - and Pro reads this key as its master switch, so the
-			// stored false would silently switch Pro into multi-day mode on
-			// upgrade. Same-day is the only mode free supports, so record it.
+			// Without Pro no field is rendered, so nothing is ever submitted
+			// for this key. Reading its absence as "unchecked" would store
+			// false although the plugin only ever does same-day - and Pro
+			// reads this key as its master switch, so the stored false would
+			// silently switch Pro into multi-day mode on upgrade. Same-day is
+			// the only mode free supports, so record it.
 			$sanitized['same_day_only'] = true;
 		}
 
@@ -684,7 +684,10 @@ class Pizzapilot_Settings {
 	}
 
 	/**
-	 * Callback to render the Same-Day Delivery Only checkbox.
+	 * Callback to render the Same-Day Delivery Only setting.
+	 *
+	 * With Pro active this is a checkbox. Without Pro it is a plain-text
+	 * explanation, since same-day is the only mode the free plugin supports.
 	 */
 	public function same_day_only_callback() {
 		$pro_active      = Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' );
@@ -696,23 +699,20 @@ class Pizzapilot_Settings {
 			echo '<label for="pizzapilot_same_day_only"> ' . esc_html__( 'Only allow same-day delivery orders.', 'pizzapilot' ) . '</label>';
 			echo '<p class="description">' . esc_html__( 'Note: Changing this setting will require saving and refreshing the page to show/hide slot countdown options.', 'pizzapilot' ) . '</p>';
 		} else {
-			echo '<input type="checkbox" id="pizzapilot_same_day_only" name="pizzapilot_advanced_settings[same_day_only]" value="1" class="regular-text" disabled checked/>';
-			echo '<label for="pizzapilot_same_day_only"> ';
-			echo '<span class="pizzapilot-pro-tooltip">';
-			echo esc_html__( 'Same-day only', 'pizzapilot' );
-			echo '<span class="pizzapilot-tooltip-text">';
-			echo esc_html__( 'With PizzaPilot Pro, allow customers to select delivery dates up to 14 days in advance with a calendar date picker.', 'pizzapilot' );
-			echo '</span></span> ';
-			echo wp_kses_post( $upgrade_message );
-			echo '</label>';
+			// No form control here: free only supports same-day ordering, and
+			// sanitize_advanced_settings() records that without needing a value.
+			echo '<p>';
+			echo esc_html__( 'Orders are taken for today only. Future-date ordering is available in PizzaPilot Pro.', 'pizzapilot' );
+			echo ' ' . wp_kses_post( $upgrade_message );
+			echo '</p>';
 		}
 	}
 
 	/**
-	 * Render a greyed-out Pro feature preview field.
+	 * Render a plain-text Pro feature description.
 	 *
-	 * Displays a disabled input with a PRO badge and description,
-	 * used to showcase features only available in Pro.
+	 * Displays a PRO badge, a short description and an upgrade link.
+	 * Text only: no form controls are rendered for Pro features.
 	 *
 	 * @since    1.1.0
 	 * @param    string $label       The feature label text.
@@ -725,10 +725,10 @@ class Pizzapilot_Settings {
 		echo '<span class="pizzapilot-pro-badge">';
 		echo esc_html__( 'PRO', 'pizzapilot' );
 		echo '</span> ';
-		echo '<span class="pizzapilot-pro-label" style="color: #a7aaad;">';
+		echo '<span class="pizzapilot-pro-label">';
 		echo esc_html( $label );
 		echo '</span>';
-		echo '<p class="description" style="color: #a7aaad;">';
+		echo '<p class="description pizzapilot-pro-description">';
 		echo esc_html( $description ) . ' ';
 		echo '<a href="' . esc_url( $upgrade_url ) . '">';
 		echo esc_html__( 'Upgrade to Pro', 'pizzapilot' );
@@ -737,7 +737,7 @@ class Pizzapilot_Settings {
 	}
 
 	/**
-	 * Callback to render the greyed-out Slot Capacity Pro feature.
+	 * Callback to render the Slot Capacity Pro feature description.
 	 *
 	 * @since    1.1.0
 	 * @return   void
@@ -750,7 +750,7 @@ class Pizzapilot_Settings {
 	}
 
 	/**
-	 * Callback to render the greyed-out Recurring Slots Pro feature.
+	 * Callback to render the Recurring Slots Pro feature description.
 	 *
 	 * @since    1.1.0
 	 * @return   void
@@ -763,7 +763,7 @@ class Pizzapilot_Settings {
 	}
 
 	/**
-	 * Callback to render the greyed-out Delivery Maps Pro feature.
+	 * Callback to render the Delivery Maps Pro feature description.
 	 *
 	 * @since    1.1.0
 	 * @return   void

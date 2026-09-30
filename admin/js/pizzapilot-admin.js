@@ -2,31 +2,24 @@
 	'use strict';
 
 	/**
-	 * All of the code for your admin-facing JavaScript source
-	 * should reside in this file.
+	 * Hide PizzaPilot delivery info from the order screen's address display.
 	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
+	 * WooCommerce prints the additional checkout fields as "Delivery Options:"
+	 * and "Delivery Time:" paragraphs inside the address columns. PizzaPilot
+	 * shows the same data in its own meta box, so these duplicates are hidden.
+	 * The paragraphs carry no identifying class, so they can only be matched
+	 * on their text content.
 	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
+	 * Only enqueued on the WooCommerce order edit screens (legacy and HPOS).
 	 */
+	$( function() {
+		$( '.order_data_column .address p' ).each( function() {
+			var text = $( this ).text();
+
+			if ( text.indexOf( 'Delivery Options:' ) !== -1 || text.indexOf( 'Delivery Time:' ) !== -1 ) {
+				$( this ).hide();
+			}
+		} );
+	} );
 
 })( jQuery );

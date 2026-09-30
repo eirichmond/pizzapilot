@@ -77,3 +77,37 @@
 		transition: none;
 	}
 }
+
+/* "Upgrade to Pro" submenu item and plugins-list action link.
+ *
+ * Both appear on every admin screen, which is why this stylesheet is
+ * enqueued everywhere in wp-admin rather than on PizzaPilot pages only.
+ */
+#adminmenu .pizzapilot-upgrade-menu-item {
+	color: #f0b849;
+}
+
+.plugins .pizzapilot-upgrade-link {
+	color: #f0b849;
+	font-weight: 600;
+}
+
+/* Muted text for the Pro feature descriptions on the Advanced tab.
+ * .form-table p. is needed to outrank core's `p.description` colour. */
+.pizzapilot-pro-label,
+.form-table p.pizzapilot-pro-description {
+	color: #a7aaad;
+}
+
+/* PizzaPilot delivery details on the WooCommerce order edit screen. */
+.pizzapilot-order-meta {
+	margin-top: 15px;
+	padding: 12px;
+	background: #f0f0f1;
+	border-left: 4px solid #2271b1;
+}
+
+/* Scoped to #order_data to beat WooCommerce's `#order_data h3` top margin. */
+#order_data .pizzapilot-order-meta__title {
+	margin-top: 0;
+}

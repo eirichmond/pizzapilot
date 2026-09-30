@@ -117,7 +117,7 @@ class PizzaPilot_Kitchen {
 					'<p>' . __( 'This page shows today\'s orders grouped by delivery time slot.', 'pizzapilot' ) . '</p>' .
 					'<ul>' .
 					'<li>' . __( 'Each card shows the customer name, delivery type, and ordered items.', 'pizzapilot' ) . '</li>' .
-					'<li>' . __( 'Click "Mark Completed" to flag an order as done. Completed orders are dimmed.', 'pizzapilot' ) . '</li>' .
+					'<li>' . __( 'Click "Mark Completed" to mark an order as done. This also sets the WooCommerce order status to completed and removes it from this view.', 'pizzapilot' ) . '</li>' .
 					'<li>' . __( 'Use the Refresh button to reload orders — the page does not auto-update.', 'pizzapilot' ) . '</li>' .
 					'</ul>',
 			)
@@ -325,6 +325,15 @@ class PizzaPilot_Kitchen {
 		$new_status = 'yes' === $new_status ? 'yes' : 'no';
 
 		$order->update_meta_data( '_pizzapilot_kitchen_completed', $new_status );
+
+		// Sync with WooCommerce order status so completed orders drop out of
+		// the kitchen view (which only queries processing / on-hold orders).
+		if ( 'yes' === $new_status ) {
+			$order->set_status( 'completed', __( 'Marked completed from PizzaPilot Kitchen.', 'pizzapilot' ) );
+		} elseif ( 'no' === $new_status && 'completed' === $order->get_status() ) {
+			$order->set_status( 'processing', __( 'Returned to processing from PizzaPilot Kitchen.', 'pizzapilot' ) );
+		}
+
 		$order->save();
 
 		/**
@@ -385,7 +394,7 @@ class PizzaPilot_Kitchen {
 		echo esc_html__( 'Upgrade for live-updating orders, drag-and-drop reordering, and kitchen ticket printing.', 'pizzapilot' );
 		echo ' <a href="' . esc_url( $upgrade_url ) . '">' . esc_html__( 'Learn more', 'pizzapilot' ) . '</a>';
 		echo '</p>';
-		echo '<a href="' . esc_url( $dismiss_url ) . '" class="notice-dismiss-link" style="text-decoration:none;float:right;margin-top:-28px;">';
+		echo '<a href="' . esc_url( $dismiss_url ) . '" class="notice-dismiss-link pizzapilot-pro-banner__dismiss">';
 		echo '<span class="dashicons dashicons-dismiss"></span>';
 		echo '</a>';
 		echo '</div>';
@@ -428,9 +437,9 @@ class PizzaPilot_Kitchen {
 		$day_end   = (int) $date_obj->setTime( 23, 59, 59 )->format( 'U' );
 
 		// Query orders with PizzaPilot delivery time within today's range.
-		// meta_query is required here: WooCommerce stores the slot timestamp as
-		// order meta, and the kitchen view is admin-only and scoped to a single
-		// day, so the result set is small.
+		// A meta query is required here: WooCommerce stores the slot timestamp
+		// as order meta, and the kitchen view is admin-only and scoped to a
+		// single day, so the result set is small.
 		//
 		// The slot timestamp lives under one of two keys: block checkout stores
 		// it as '_wc_other/pizzapilot/delivery-time', classic checkout as
@@ -442,27 +451,26 @@ class PizzaPilot_Kitchen {
 		// checkout saw an empty kitchen page. Ordering is not lost: the slot
 		// groups built below are sorted by timestamp with uasort(), and orders
 		// inside a group all share the same slot time anyway.
-		$orders = wc_get_orders(
-			array(
-				'limit'      => -1,
-				'status'     => array( 'wc-processing', 'wc-on-hold', 'wc-completed' ),
-				'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
-					'relation' => 'OR',
-					array(
-						'key'     => '_wc_other/pizzapilot/delivery-time',
-						'value'   => array( $day_start, $day_end ),
-						'compare' => 'BETWEEN',
-						'type'    => 'NUMERIC',
-					),
-					array(
-						'key'     => '_pizzapilot_delivery_time',
-						'value'   => array( $day_start, $day_end ),
-						'compare' => 'BETWEEN',
-						'type'    => 'NUMERIC',
-					),
-				),
-			)
+		$query_args = array(
+			'limit'  => -1,
+			'status' => array( 'wc-processing', 'wc-on-hold' ),
 		);
+
+		if ( \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ) {
+			$query_args['meta_query'] = self::delivery_time_meta_query( $day_start, $day_end ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		} else {
+			// The legacy (posts) order store does not accept 'meta_query': it
+			// logs a _doing_it_wrong notice and drops it, which returned every
+			// processing/on-hold order from any date. Pass the range as a
+			// custom query var instead; filter_legacy_orders_query() turns it
+			// back into a meta_query on the underlying WP_Query.
+			$query_args['pizzapilot_delivery_time_range'] = array( $day_start, $day_end );
+			add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', array( __CLASS__, 'filter_legacy_orders_query' ), 10, 2 );
+		}
+
+		$orders = wc_get_orders( $query_args );
+
+		remove_filter( 'woocommerce_order_data_store_cpt_get_orders_query', array( __CLASS__, 'filter_legacy_orders_query' ), 10 );
 
 		$groups = array();
 
@@ -477,6 +485,12 @@ class PizzaPilot_Kitchen {
 			}
 
 			$delivery_time = (int) $delivery_time;
+
+			// Backstop in case a query filter or order store ignored the range.
+			if ( $delivery_time < $day_start || $delivery_time > $day_end ) {
+				continue;
+			}
+
 			$slot_datetime = new DateTime( '@' . $delivery_time );
 			$slot_datetime->setTimezone( $timezone );
 
@@ -509,5 +523,55 @@ class PizzaPilot_Kitchen {
 		);
 
 		return $groups;
+	}
+
+	/**
+	 * Build the meta query matching either PizzaPilot slot-time key within a range.
+	 *
+	 * @since    1.2.2
+	 * @param    int $day_start    Range start (Unix timestamp, inclusive).
+	 * @param    int $day_end      Range end (Unix timestamp, inclusive).
+	 * @return   array             Meta query array.
+	 */
+	private static function delivery_time_meta_query( $day_start, $day_end ) {
+		return array(
+			'relation' => 'OR',
+			array(
+				'key'     => '_wc_other/pizzapilot/delivery-time',
+				'value'   => array( $day_start, $day_end ),
+				'compare' => 'BETWEEN',
+				'type'    => 'NUMERIC',
+			),
+			array(
+				'key'     => '_pizzapilot_delivery_time',
+				'value'   => array( $day_start, $day_end ),
+				'compare' => 'BETWEEN',
+				'type'    => 'NUMERIC',
+			),
+		);
+	}
+
+	/**
+	 * Apply the slot-time range to a legacy (posts) order store query.
+	 *
+	 * Hooked to woocommerce_order_data_store_cpt_get_orders_query only for
+	 * the duration of the kitchen query in get_orders_grouped_by_slot().
+	 *
+	 * @since    1.2.2
+	 * @param    array $query         WP_Query arguments built by WooCommerce.
+	 * @param    array $query_vars    Arguments passed to wc_get_orders().
+	 * @return   array                WP_Query arguments.
+	 */
+	public static function filter_legacy_orders_query( $query, $query_vars ) {
+		if ( empty( $query_vars['pizzapilot_delivery_time_range'] ) ) {
+			return $query;
+		}
+
+		list( $day_start, $day_end ) = $query_vars['pizzapilot_delivery_time_range'];
+
+		$query['meta_query']   = isset( $query['meta_query'] ) ? (array) $query['meta_query'] : array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+		$query['meta_query'][] = self::delivery_time_meta_query( (int) $day_start, (int) $day_end );
+
+		return $query;
 	}
 }
