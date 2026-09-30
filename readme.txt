@@ -3,7 +3,7 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -84,6 +84,13 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.2 =
+* Changed: the Advanced settings tab now describes same-day ordering in plain text with a link to PizzaPilot Pro, instead of showing a checkbox that could not be changed.
+* Improved: admin JavaScript now loads only on the WooCommerce order edit screens, from its own file rather than inline.
+* Improved: all inline styles moved into the plugin's stylesheets.
+* Fixed: a PHP notice ("Order properties should not be accessed directly") logged each time an order was opened in the admin.
+* Fixed: on stores not using WooCommerce's High-Performance Order Storage, the Kitchen Orders page ignored the date and could list open orders from other days. It now shows only today's orders on both storage types, without logging a notice.
+
 = 1.2.1 =
 * Fixed: on block checkout, an order could be placed with no delivery time when the shop had no slots available. WooCommerce rejects a select field with an empty options list, so the Delivery Time field was never registered and nothing validated it. A placeholder option now keeps the field registered and blocks checkout until a real slot is available.
 * Fixed: the Kitchen Orders page showed "No orders for today" on stores using classic checkout. The query ordered on the block checkout's meta key, which excluded every order that stored its slot under the classic key. Slot grouping is unchanged; the groups were already sorted in PHP.
@@ -108,6 +115,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * WooCommerce block and classic checkout support
 
 == Upgrade Notice ==
+
+= 1.2.2 =
+Housekeeping release for WordPress.org guidelines: no inline scripts or styles, and no locked settings in the free plugin. No change to checkout behaviour.
 
 = 1.2.1 =
 Bug fix release. Prevents block checkout accepting an order with no delivery time, restores the Kitchen Orders page for stores on classic checkout, makes the kitchen Pro notice dismissable, corrects the stored same-day delivery setting, and fixes tooltip styling on the Delivery settings tab.

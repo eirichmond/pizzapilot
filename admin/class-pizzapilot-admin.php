@@ -60,45 +60,42 @@ class Pizzapilot_Admin {
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
+	 * Loaded on every admin screen because it styles the "Upgrade to Pro"
+	 * menu item and plugins-list link, which appear everywhere in wp-admin,
+	 * as well as the settings screens and the order meta box. Admin only;
+	 * nothing here loads on the front end.
+	 *
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Pizzapilot_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Pizzapilot_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pizzapilot-admin.css', array(), $this->version, 'all' );
 	}
 
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
+	 * Only loaded on the WooCommerce order edit screens, where it hides the
+	 * duplicate PizzaPilot fields from the address display. Covers both the
+	 * legacy post-based screen and the HPOS screen.
+	 *
 	 * @since    1.0.0
+	 * @param    string $hook_suffix    The current admin page hook suffix.
 	 */
-	public function enqueue_scripts() {
+	public function enqueue_scripts( $hook_suffix ) {
+		// Legacy order storage edits orders on post.php / post-new.php; HPOS
+		// uses its own WooCommerce page. Bail early on everything else.
+		if ( ! in_array( $hook_suffix, array( 'post.php', 'post-new.php', 'woocommerce_page_wc-orders' ), true ) ) {
+			return;
+		}
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Pizzapilot_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Pizzapilot_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		// post.php serves every post type, so confirm it is an order screen.
+		$screen = get_current_screen();
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pizzapilot-admin.js', array( 'jquery' ), $this->version, false );
+		if ( ! $screen || ! in_array( $screen->id, array( 'shop_order', 'woocommerce_page_wc-orders' ), true ) ) {
+			return;
+		}
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/pizzapilot-admin.js', array( 'jquery' ), $this->version, true );
 	}
 
 	/**
@@ -107,11 +104,13 @@ class Pizzapilot_Admin {
 	 * Shows the delivery type and time slot in a custom meta box on the order edit page.
 	 *
 	 * @since    1.0.0
-	 * @param    WP_Post    $post    The order post object.
+	 * @param    WC_Order    $order    The order object. WooCommerce passes a
+	 *                                 WC_Order on both legacy and HPOS screens;
+	 *                                 reading ->ID from it triggers a notice.
 	 * @return   void
 	 */
-	public function pizzapilot_display_order_meta( $post ) {
-		$order = wc_get_order( $post->ID );
+	public function pizzapilot_display_order_meta( $order ) {
+		$order = wc_get_order( $order );
 
 		if ( ! $order ) {
 			return;
@@ -137,8 +136,8 @@ class Pizzapilot_Admin {
 			return;
 		}
 
-		echo '<div class="pizzapilot-order-meta" style="margin-top: 15px; padding: 12px; background: #f0f0f1; border-left: 4px solid #2271b1;">';
-		echo '<h3 style="margin-top: 0;">' . esc_html__( 'PizzaPilot Delivery Details', 'pizzapilot' ) . '</h3>';
+		echo '<div class="pizzapilot-order-meta">';
+		echo '<h3 class="pizzapilot-order-meta__title">' . esc_html__( 'PizzaPilot Delivery Details', 'pizzapilot' ) . '</h3>';
 
 		if ( ! empty( $delivery_type ) ) {
 			echo '<p><strong>' . esc_html__( 'Delivery Type:', 'pizzapilot' ) . '</strong> ';
@@ -220,37 +219,6 @@ class Pizzapilot_Admin {
 		}
 
 		return $display;
-	}
-
-	/**
-	 * Add CSS and JavaScript to hide PizzaPilot meta from shipping address display.
-	 *
-	 * Hides the "Delivery Options" and "Delivery Time" from the shipping address section
-	 * since we display them in our custom meta box.
-	 *
-	 * @since    1.0.0
-	 * @return   void
-	 */
-	public function pizzapilot_hide_meta_css() {
-		$screen = get_current_screen();
-
-		if ( ! $screen || ( 'shop_order' !== $screen->id && 'woocommerce_page_wc-orders' !== $screen->id ) ) {
-			return;
-		}
-
-		?>
-		<script>
-			jQuery(document).ready(function($) {
-				// Hide PizzaPilot delivery info from the shipping address display
-				$('.order_data_column .address p').each(function() {
-					var text = $(this).text();
-					if (text.includes('Delivery Options:') || text.includes('Delivery Time:')) {
-						$(this).hide();
-					}
-				});
-			});
-		</script>
-		<?php
 	}
 
 	/**
@@ -383,7 +351,7 @@ class Pizzapilot_Admin {
 		);
 
 		if ( ! Pizzapilot_Helpers::pizzapilot_is_pro_active( 'Pizzapilot_Pro' ) ) {
-			$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-upgrade' ) ) . '" style="color: #f0b849; font-weight: 600;">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</a>';
+			$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-upgrade' ) ) . '" class="pizzapilot-upgrade-link">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</a>';
 		}
 
 		return array_merge( $plugin_links, $links );
