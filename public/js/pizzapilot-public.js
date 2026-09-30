@@ -24,7 +24,7 @@
 			}
 
 			if ($targetField.length) {
-				$messageContainer = $('<div id="pizzapilot-postcode-message" class="woocommerce-info" style="display:none;"></div>');
+				$messageContainer = $('<div id="pizzapilot-postcode-message" class="woocommerce-info"></div>').hide();
 				$targetField.after($messageContainer);
 			}
 		}

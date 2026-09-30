@@ -75,7 +75,7 @@ class PizzaPilot_Pro_Teasers {
 		add_submenu_page(
 			'pizzapilot-settings',
 			__( 'Upgrade to Pro', 'pizzapilot' ),
-			'<span style="color: #f0b849;">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</span>',
+			'<span class="pizzapilot-upgrade-menu-item">' . esc_html__( 'Upgrade to Pro', 'pizzapilot' ) . '</span>',
 			'manage_options',
 			'pizzapilot-upgrade',
 			array( $this, 'render_upgrade_page' )
