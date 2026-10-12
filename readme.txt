@@ -3,7 +3,7 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,7 +28,7 @@ PizzaPilot uses the WooCommerce Additional Checkout Fields API for seamless inte
 
 == External Services ==
 
-This plugin connects to the postcodes.io API to convert UK postcodes into geographic coordinates. This is required to calculate the distance between your store and a customer's address, which is how the delivery radius check works.
+This plugin connects to postcodes.io, a free UK postcode lookup service run by Ideal Postcodes, to convert UK postcodes into geographic coordinates. This is required to calculate the distance between your store and a customer's address, which is how the delivery radius check works.
 
 **What is sent, and when:**
 
@@ -38,8 +38,10 @@ This plugin connects to the postcodes.io API to convert UK postcodes into geogra
 
 No API key or account is required, and the plugin sends no data to the service unless a postcode check is actually performed.
 
-Service: https://postcodes.io/
-Source code and licence (MIT): https://github.com/ideal-postcodes/postcodes.io
+* Service: https://postcodes.io/
+* Licence and data sources: https://postcodes.io/docs/licences
+* Terms of service: https://terms.ideal-postcodes.co.uk
+* Privacy policy: https://terms.ideal-postcodes.co.uk/website/privacy.html
 
 == Installation ==
 
@@ -84,6 +86,10 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.3 =
+* Changed: the Plugin URI now points to pizzapilotpro.com, the official PizzaPilot site.
+* Improved: the External Services section now names the operator of postcodes.io (Ideal Postcodes) and links to its terms of service and privacy policy.
+
 = 1.2.2 =
 * Changed: "Mark Completed" on the Kitchen Orders page now also sets the WooCommerce order status to Completed, and the order drops out of the kitchen view. Unmarking it returns the order to Processing. The kitchen view now lists only Processing and On hold orders.
 * Changed: the Advanced settings tab now describes same-day ordering in plain text with a link to PizzaPilot Pro, instead of showing a checkbox that could not be changed.
@@ -117,8 +123,11 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Upgrade Notice ==
 
+= 1.2.3 =
+Readme and plugin header updates only. No change to plugin behaviour.
+
 = 1.2.2 =
-"Mark Completed" on the Kitchen Orders page now also completes the WooCommerce order, which may send the customer WooCommerce's order-completed email if that email is enabled. Also fixes the Kitchen Orders date filter on stores not using High-Performance Order Storage, and removes inline scripts, inline styles and the locked same-day setting to meet WordPress.org guidelines. No change to checkout behaviour.
+"Mark Completed" on the Kitchen Orders page now also completes the WooCommerce order, which may send the customer's order-completed email. Also fixes the Kitchen Orders date filter on non-HPOS stores and meets WordPress.org guidelines. No change to checkout.
 
 = 1.2.1 =
 Bug fix release. Prevents block checkout accepting an order with no delivery time, restores the Kitchen Orders page for stores on classic checkout, makes the kitchen Pro notice dismissable, corrects the stored same-day delivery setting, and fixes tooltip styling on the Delivery settings tab.
