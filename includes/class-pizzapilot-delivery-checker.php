@@ -345,7 +345,13 @@ class Pizzapilot_Delivery_Checker {
 	 * @return   void
 	 * @throws   Exception  If validation fails, throws exception to block checkout.
 	 */
-	public function validate_delivery_eligibility_block( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $request required by WC action signature.
+	public function validate_delivery_eligibility_block( $order, $request ) {
+		// Only when the order is placed (POST), not while the block checkout
+		// saves the form to the draft (PUT/PATCH), which fires the same action.
+		if ( 'POST' !== $request->get_method() ) {
+			return;
+		}
+
 		// Get delivery type from order meta
 		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
 

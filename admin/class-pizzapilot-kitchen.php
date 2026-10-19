@@ -62,13 +62,24 @@ class PizzaPilot_Kitchen {
 	 * @return   void
 	 */
 	public function add_kitchen_menu() {
+		/**
+		 * Filters the callback that renders the Kitchen Orders page.
+		 *
+		 * Lets an extension supply its own kitchen screen under the same menu
+		 * item and page slug (`pizzapilot-kitchen`).
+		 *
+		 * @since 1.2.5
+		 * @param callable $callback Default: this class's render_kitchen_page().
+		 */
+		$callback = apply_filters( 'pizzapilot_kitchen_page_callback', array( $this, 'render_kitchen_page' ) );
+
 		add_submenu_page(
 			'pizzapilot-settings',
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			__( 'Kitchen Orders', 'pizzapilot' ),
 			'edit_shop_orders',
 			'pizzapilot-kitchen',
-			array( $this, 'render_kitchen_page' )
+			is_callable( $callback ) ? $callback : array( $this, 'render_kitchen_page' )
 		);
 	}
 
@@ -131,9 +142,15 @@ class PizzaPilot_Kitchen {
 	 * @return   void
 	 */
 	public function render_kitchen_page() {
-		$today = current_time( 'Y-m-d' );
+		/**
+		 * Filters the date the Kitchen Orders page shows.
+		 *
+		 * @since 1.2.5
+		 * @param string $date Date in Y-m-d format. Default: today.
+		 */
+		$date = (string) apply_filters( 'pizzapilot_kitchen_date', current_time( 'Y-m-d' ) );
 
-		$grouped_orders = $this->get_orders_grouped_by_slot( $today );
+		$grouped_orders = $this->get_orders_grouped_by_slot( $date );
 
 		echo '<div class="wrap pizzapilot-kitchen-wrap">';
 		echo '<h1>' . esc_html__( 'Kitchen Orders', 'pizzapilot' ) . '</h1>';
@@ -141,7 +158,15 @@ class PizzaPilot_Kitchen {
 		$this->render_pro_upsell_banner();
 
 		echo '<p class="pizzapilot-kitchen-actions">';
-		echo esc_html__( 'Orders for today, grouped by time slot.', 'pizzapilot' ) . ' ';
+		$is_today = current_time( 'Y-m-d' ) === $date;
+		$day      = wp_date( get_option( 'date_format' ), (int) strtotime( $date . ' 12:00' ) );
+
+		if ( $is_today ) {
+			echo esc_html__( 'Orders for today, grouped by time slot.', 'pizzapilot' ) . ' ';
+		} else {
+			/* translators: %s: the date shown, in the site's date format. */
+			echo esc_html( sprintf( __( 'Orders for %s, grouped by time slot.', 'pizzapilot' ), $day ) ) . ' ';
+		}
 		echo '<a href="' . esc_url( admin_url( 'admin.php?page=pizzapilot-kitchen' ) ) . '" class="button">';
 		echo esc_html__( 'Refresh', 'pizzapilot' );
 		echo '</a>';
@@ -149,7 +174,12 @@ class PizzaPilot_Kitchen {
 
 		if ( empty( $grouped_orders ) ) {
 			echo '<div class="pizzapilot-kitchen-empty">';
-			echo '<p>' . esc_html__( 'No orders for today.', 'pizzapilot' ) . '</p>';
+			if ( $is_today ) {
+				echo '<p>' . esc_html__( 'No orders for today.', 'pizzapilot' ) . '</p>';
+			} else {
+				/* translators: %s: the date shown, in the site's date format. */
+				echo '<p>' . esc_html( sprintf( __( 'No orders for %s.', 'pizzapilot' ), $day ) ) . '</p>';
+			}
 			echo '</div>';
 		} else {
 			foreach ( $grouped_orders as $group ) {
@@ -175,13 +205,9 @@ class PizzaPilot_Kitchen {
 		// heading reflects the actual stored slot, not "today".
 		$slot_date = '';
 		if ( ! empty( $orders ) ) {
-			$first_order   = reset( $orders );
-			$delivery_time = $first_order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
-			if ( empty( $delivery_time ) ) {
-				$delivery_time = $first_order->get_meta( '_pizzapilot_delivery_time', true );
-			}
-			if ( ! empty( $delivery_time ) && is_numeric( $delivery_time ) ) {
-				$slot_date = wp_date( 'D jS M', (int) $delivery_time );
+			$delivery_time = Pizzapilot_Helpers::get_order_delivery_time( reset( $orders ) );
+			if ( $delivery_time ) {
+				$slot_date = wp_date( 'D jS M', $delivery_time );
 			}
 		}
 
@@ -223,10 +249,7 @@ class PizzaPilot_Kitchen {
 		$customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
 		$completed     = 'yes' === $order->get_meta( '_pizzapilot_kitchen_completed', true );
 
-		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
-		if ( empty( $delivery_type ) ) {
-			$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
-		}
+		$delivery_type = Pizzapilot_Helpers::get_order_delivery_type( $order );
 
 		$card_class = 'pizzapilot-order-card';
 		if ( $completed ) {
@@ -260,6 +283,14 @@ class PizzaPilot_Kitchen {
 
 		echo '<div class="pizzapilot-order-card-footer">';
 		$this->render_completion_toggle( $order_id, $completed );
+
+		/**
+		 * Fires at the end of an order card's footer on the Kitchen Orders page.
+		 *
+		 * @since 1.2.5
+		 * @param WC_Order $order The order.
+		 */
+		do_action( 'pizzapilot_kitchen_order_card_footer', $order );
 		echo '</div>';
 
 		echo '</div>';
@@ -451,9 +482,17 @@ class PizzaPilot_Kitchen {
 		// checkout saw an empty kitchen page. Ordering is not lost: the slot
 		// groups built below are sorted by timestamp with uasort(), and orders
 		// inside a group all share the same slot time anyway.
+		/**
+		 * Filters the order statuses listed on the Kitchen Orders page.
+		 *
+		 * @since 1.2.5
+		 * @param string[] $statuses Default: processing and on hold, with the 'wc-' prefix.
+		 */
+		$statuses = (array) apply_filters( 'pizzapilot_kitchen_order_statuses', array( 'wc-processing', 'wc-on-hold' ) );
+
 		$query_args = array(
 			'limit'  => -1,
-			'status' => array( 'wc-processing', 'wc-on-hold' ),
+			'status' => $statuses,
 		);
 
 		if ( \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ) {
@@ -475,16 +514,11 @@ class PizzaPilot_Kitchen {
 		$groups = array();
 
 		foreach ( $orders as $order ) {
-			$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
-			if ( empty( $delivery_time ) ) {
-				$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
-			}
+			$delivery_time = Pizzapilot_Helpers::get_order_delivery_time( $order );
 
-			if ( empty( $delivery_time ) || ! is_numeric( $delivery_time ) ) {
+			if ( ! $delivery_time ) {
 				continue;
 			}
-
-			$delivery_time = (int) $delivery_time;
 
 			// Backstop in case a query filter or order store ignored the range.
 			if ( $delivery_time < $day_start || $delivery_time > $day_end ) {
@@ -522,7 +556,15 @@ class PizzaPilot_Kitchen {
 			}
 		);
 
-		return $groups;
+		/**
+		 * Filters the Kitchen Orders page's orders, grouped by slot.
+		 *
+		 * @since 1.2.5
+		 * @param array  $groups Groups keyed by slot start (YmdHi), each with 'timestamp' (int),
+		 *                       'label' (string) and 'orders' (WC_Order[]), sorted by time.
+		 * @param string $date   The date shown, in Y-m-d format.
+		 */
+		return apply_filters( 'pizzapilot_kitchen_orders', $groups, $date );
 	}
 
 	/**
