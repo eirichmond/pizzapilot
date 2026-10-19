@@ -199,6 +199,9 @@ class Pizzapilot {
 		// Hide PizzaPilot fields from default WooCommerce additional fields display
 		$this->loader->add_filter( 'woocommerce_order_data_store_cpt_display_additional_field', $plugin_admin, 'pizzapilot_hide_checkout_field_display', 10, 3 );
 
+		// Keep PizzaPilot fields out of the editable order fields (after WooCommerce adds them at 10)
+		$this->loader->add_filter( 'woocommerce_admin_shipping_fields', $plugin_admin, 'pizzapilot_remove_order_edit_fields', 20 );
+
 		// Add PizzaPilot column to orders list (CPT storage)
 		$this->loader->add_filter( 'manage_edit-shop_order_columns', $plugin_admin, 'pizzapilot_add_order_column' );
 		$this->loader->add_action( 'manage_shop_order_posts_custom_column', $plugin_admin, 'pizzapilot_order_column_content', 10, 2 );

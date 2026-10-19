@@ -47,4 +47,43 @@ class Pizzapilot_Helpers {
 			'</a>'
 		);
 	}
+
+	/**
+	 * Get an order's delivery slot start time.
+	 *
+	 * Both checkouts save it to `_pizzapilot_delivery_time`, which is the one
+	 * PizzaPilot keeps in step with the order. The block checkout's own copy
+	 * (`_wc_other/pizzapilot/delivery-time`) is only a fallback, for orders
+	 * placed before that copy was made.
+	 *
+	 * @since    1.2.5
+	 * @param    WC_Order $order The order.
+	 * @return   int             Unix timestamp, or 0 when the order has no slot.
+	 */
+	public static function get_order_delivery_time( $order ) {
+		$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
+
+		if ( empty( $delivery_time ) ) {
+			$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
+		}
+
+		return is_numeric( $delivery_time ) ? (int) $delivery_time : 0;
+	}
+
+	/**
+	 * Get an order's delivery type ("delivery" or "collect").
+	 *
+	 * @since    1.2.5
+	 * @param    WC_Order $order The order.
+	 * @return   string          Empty when the order has none.
+	 */
+	public static function get_order_delivery_type( $order ) {
+		$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
+
+		if ( empty( $delivery_type ) ) {
+			$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
+		}
+
+		return (string) $delivery_type;
+	}
 }

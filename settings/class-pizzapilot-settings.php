@@ -776,17 +776,73 @@ class Pizzapilot_Settings {
 	}
 
 	/**
+	 * Get the delivery slots for every available date.
+	 *
+	 * Free offers today only. The dates come from the `pizzapilot_available_dates`
+	 * filter, so an extension can add later dates; each gets the same opening
+	 * hours and 30-minute slots.
+	 *
+	 * @since    1.0.0
+	 * @return   array    Slot labels keyed by start timestamp, earliest first.
+	 */
+	private function get_delivery_time_slots() {
+		$slots = array();
+
+		foreach ( $this->get_available_dates() as $date ) {
+			$slots += $this->get_delivery_time_slots_for_date( $date );
+		}
+
+		return $slots;
+	}
+
+	/**
+	 * Get the dates customers can order for.
+	 *
+	 * @since    1.2.5
+	 * @return   string[] Dates in Y-m-d format, today or later, sorted.
+	 */
+	public function get_available_dates() {
+		$today = current_time( 'Y-m-d' );
+
+		/**
+		 * Filters the dates customers can order for.
+		 *
+		 * Free generates its automatic delivery slots for each date returned.
+		 * Invalid dates and dates before today are dropped.
+		 *
+		 * @since 1.2.5
+		 * @param string[] $dates Dates in Y-m-d format. Default: today only.
+		 */
+		$dates = (array) apply_filters( 'pizzapilot_available_dates', array( $today ) );
+
+		$valid = array();
+
+		foreach ( $dates as $date ) {
+			$parsed = is_string( $date ) ? DateTime::createFromFormat( '!Y-m-d', $date ) : false;
+
+			if ( $parsed && $parsed->format( 'Y-m-d' ) === $date && $date >= $today ) {
+				$valid[ $date ] = $date;
+			}
+		}
+
+		sort( $valid );
+
+		return array_values( $valid );
+	}
+
+	/**
 	 * Get available delivery time slots between start and end times
 	 *
-	 * Generates an array of 30-minute time slots for today between the configured
+	 * Generates an array of 30-minute time slots for one date between the configured
 	 * delivery start and end times. Returns unix timestamps as keys and formatted
 	 * date/time strings as values. Only returns time slots that haven't elapsed
 	 * with a 20-minute buffer (slots are removed 20 minutes after they start).
 	 *
-	 * @since    1.0.0
+	 * @since    1.2.5 (was get_delivery_time_slots(), today only, since 1.0.0)
+	 * @param    string $date Date in Y-m-d format.
 	 * @return   array    Array of time slots with timestamp keys and formatted values
 	 */
-	private function get_delivery_time_slots() {
+	private function get_delivery_time_slots_for_date( $date ) {
 
 		$start_time = $this->get_setting( 'delivery_start_time', '09:30' );
 		$end_time   = $this->get_setting( 'delivery_end_time', '17:30' );
@@ -796,18 +852,18 @@ class Pizzapilot_Settings {
 		// Get WordPress timezone
 		$timezone = wp_timezone();
 
-		// Create DateTime objects for today with the configured times
-		$today = new DateTime( 'today', $timezone );
+		// Create DateTime objects for the date with the configured times
+		$day   = DateTime::createFromFormat( '!Y-m-d', $date, $timezone );
 		$start = DateTime::createFromFormat( 'H:i', $start_time, $timezone );
 		$end   = DateTime::createFromFormat( 'H:i', $end_time, $timezone );
 
-		if ( false === $start || false === $end ) {
+		if ( false === $day || false === $start || false === $end ) {
 			return $slots; // Return empty array if invalid times
 		}
 
-		// Set the date to today for start and end times
-		$start->setDate( $today->format( 'Y' ), $today->format( 'm' ), $today->format( 'd' ) );
-		$end->setDate( $today->format( 'Y' ), $today->format( 'm' ), $today->format( 'd' ) );
+		// Set the date for start and end times
+		$start->setDate( $day->format( 'Y' ), $day->format( 'm' ), $day->format( 'd' ) );
+		$end->setDate( $day->format( 'Y' ), $day->format( 'm' ), $day->format( 'd' ) );
 
 		// Get current time in the same timezone
 		$now = new DateTime( 'now', $timezone );

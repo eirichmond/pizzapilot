@@ -116,20 +116,8 @@ class Pizzapilot_Admin {
 			return;
 		}
 
-		// Get delivery type from WooCommerce additional checkout fields
-		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
-
-		// Get delivery time from WooCommerce additional checkout fields
-		$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
-
-		// Also check legacy meta keys in case they exist
-		if ( empty( $delivery_type ) ) {
-			$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
-		}
-
-		if ( empty( $delivery_time ) ) {
-			$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
-		}
+		$delivery_type = Pizzapilot_Helpers::get_order_delivery_type( $order );
+		$delivery_time = Pizzapilot_Helpers::get_order_delivery_time( $order );
 
 		// Don't display anything if no PizzaPilot data
 		if ( empty( $delivery_type ) && empty( $delivery_time ) ) {
@@ -222,6 +210,25 @@ class Pizzapilot_Admin {
 	}
 
 	/**
+	 * Keep the PizzaPilot fields out of WooCommerce's editable order fields.
+	 *
+	 * WooCommerce shows checkout fields on the order screen as dropdowns and
+	 * saves them on every Update. Delivery Time only lists the slots still on
+	 * offer, so for an order whose slot has passed (or is full, with Pro) the
+	 * dropdown fell back to another time and Update saved it over the real
+	 * one. The details are shown in the PizzaPilot Delivery Details box instead.
+	 *
+	 * @since    1.2.5
+	 * @param    array $fields Shipping fields on the order screen.
+	 * @return   array
+	 */
+	public function pizzapilot_remove_order_edit_fields( $fields ) {
+		unset( $fields['pizzapilot/delivery-type'], $fields['pizzapilot/delivery-time'] );
+
+		return $fields;
+	}
+
+	/**
 	 * Add PizzaPilot column to orders list in admin.
 	 *
 	 * Adds a column showing delivery time slot to the orders table.
@@ -299,17 +306,8 @@ class Pizzapilot_Admin {
 			return;
 		}
 
-		// Get delivery type
-		$delivery_type = $order->get_meta( '_wc_other/pizzapilot/delivery-type', true );
-		if ( empty( $delivery_type ) ) {
-			$delivery_type = $order->get_meta( '_pizzapilot_delivery_type', true );
-		}
-
-		// Get delivery time
-		$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
-		if ( empty( $delivery_time ) ) {
-			$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
-		}
+		$delivery_type = Pizzapilot_Helpers::get_order_delivery_type( $order );
+		$delivery_time = Pizzapilot_Helpers::get_order_delivery_time( $order );
 
 		if ( empty( $delivery_time ) ) {
 			echo '—';

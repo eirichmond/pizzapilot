@@ -3,7 +3,7 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -86,6 +86,13 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.5 =
+* Fixed: on the block checkout, PizzaPilot acted on the form as the customer filled it in. WooCommerce saves the form to a draft order along the way, and PizzaPilot treated each save as a placed order: it recorded the slot as booked and ran the delivery-radius check before the customer had finished. Both now happen only when the order is placed.
+* Fixed: clicking Update on an order in the admin could change its delivery time. WooCommerce showed the delivery fields there as dropdowns listing only the slots still on offer, so for an order whose slot had passed it saved a different time. The fields are no longer editable on the order screen; the PizzaPilot Delivery Details box shows them.
+* Changed: the order screen, the Kitchen Orders page, the orders list and slot release now all read an order's delivery time and type from one place.
+* New: `pizzapilot_available_dates` filter — the dates customers can order for (default: today). Free generates its automatic slots for each date.
+* New: Kitchen Orders hooks for extensions — `pizzapilot_kitchen_page_callback`, `pizzapilot_kitchen_date`, `pizzapilot_kitchen_order_statuses`, `pizzapilot_kitchen_orders` and the `pizzapilot_kitchen_order_card_footer` action.
+
 = 1.2.4 =
 * Fixed: the classic (shortcode) checkout showed no Delivery Options or Delivery Time fields, so every order was rejected. Both fields now appear on the classic checkout as well as the Checkout block.
 * Fixed: on the classic checkout, the delivery-radius check never ran, so delivery could be chosen for a postcode outside the radius.
@@ -128,6 +135,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * WooCommerce block and classic checkout support
 
 == Upgrade Notice ==
+
+= 1.2.5 =
+Stops the block checkout booking a slot before the order is placed, and stops the admin order screen changing an order's delivery time. Adds hooks for future dates and the kitchen screen.
 
 = 1.2.4 =
 Fixes the classic (shortcode) checkout, which showed no delivery fields and rejected every order. Recommended for all stores using the classic checkout.

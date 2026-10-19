@@ -365,12 +365,21 @@ class Pizzapilot_Public {
 	 * then updates the slot availability in the database.
 	 * This method is for the new WooCommerce Blocks checkout with additional fields API.
 	 *
+	 * Only runs when the order is placed (POST). The block checkout also saves
+	 * the form to the draft order as the customer fills it in (PUT/PATCH), which
+	 * fires the same action; booking then would hold a slot for an order that
+	 * may never be placed.
+	 *
 	 * @since    1.0.0
 	 * @param    WC_Order  $order    The order object.
 	 * @param    object    $request  The request object from Store API.
 	 * @return   void
 	 */
-	public function pizzapilot_save_checkout_fields_block( $order, $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $request required by WC action signature.
+	public function pizzapilot_save_checkout_fields_block( $order, $request ) {
+		if ( 'POST' !== $request->get_method() ) {
+			return;
+		}
+
 		// Get order ID
 		$order_id = $order->get_id();
 
@@ -518,12 +527,7 @@ class Pizzapilot_Public {
 			return;
 		}
 
-		// Get the delivery time for this order
-		$delivery_time = $order->get_meta( '_wc_other/pizzapilot/delivery-time', true );
-
-		if ( empty( $delivery_time ) ) {
-			$delivery_time = $order->get_meta( '_pizzapilot_delivery_time', true );
-		}
+		$delivery_time = Pizzapilot_Helpers::get_order_delivery_time( $order );
 
 		if ( empty( $delivery_time ) ) {
 			return; // No slot associated with this order
