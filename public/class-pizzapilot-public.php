@@ -235,10 +235,59 @@ class Pizzapilot_Public {
 	}
 
 	/**
+	 * Add the delivery fields to the classic (shortcode) checkout.
+	 *
+	 * The Additional Checkout Fields API only renders in the Checkout block,
+	 * so the classic checkout needs the same two selects added here. Using
+	 * the same field names means the existing classic validation and save
+	 * handlers read them from $_POST, and WooCommerce passes them to
+	 * woocommerce_after_checkout_validation for the delivery-range check.
+	 *
+	 * @since    1.2.4
+	 * @param    array    $fields    Classic checkout fields, grouped by fieldset.
+	 * @return   array
+	 */
+	public function pizzapilot_add_classic_checkout_fields( $fields ) {
+		$settings = new Pizzapilot_Settings( PIZZAPILOT_NAME, PIZZAPILOT_VERSION );
+		$slots    = $settings->get_formatted_delivery_slots();
+
+		if ( empty( $slots ) ) {
+			$time_options = array( '' => __( 'No delivery times are currently available', 'pizzapilot' ) );
+		} else {
+			$time_options = array( '' => __( 'Select a time', 'pizzapilot' ) ) + $slots;
+		}
+
+		$fields['order']['pizzapilot/delivery-type'] = array(
+			'type'     => 'select',
+			'label'    => __( 'Delivery Options', 'pizzapilot' ),
+			'required' => true,
+			'class'    => array( 'form-row-wide' ),
+			'priority' => 5,
+			'options'  => array(
+				''         => __( 'Select a delivery type', 'pizzapilot' ),
+				'delivery' => __( 'Delivery', 'pizzapilot' ),
+				'collect'  => __( 'Collect', 'pizzapilot' ),
+			),
+		);
+
+		$fields['order']['pizzapilot/delivery-time'] = array(
+			'type'     => 'select',
+			'label'    => __( 'Delivery Time', 'pizzapilot' ),
+			'required' => true,
+			'class'    => array( 'form-row-wide' ),
+			'priority' => 6,
+			'options'  => $time_options,
+		);
+
+		return $fields;
+	}
+
+	/**
 	 * Validate checkout fields before order is processed.
 	 *
-	 * Ensures that both delivery type and time slot are selected,
-	 * and validates that the selected time slot is still available.
+	 * Validates that the selected time slot is still available. Empty
+	 * selections are reported by WooCommerce's own required-field check,
+	 * since both fields are registered as required.
 	 *
 	 * @since    1.0.0
 	 * @return   void
@@ -246,18 +295,9 @@ class Pizzapilot_Public {
 	public function pizzapilot_validate_checkout_fields() {
 		// Nonce verified by WooCommerce via woocommerce_checkout_process.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
-		$delivery_type = isset( $_POST['pizzapilot/delivery-type'] ) ? sanitize_text_field( wp_unslash( $_POST['pizzapilot/delivery-type'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce handles nonce.
 		$delivery_time = isset( $_POST['pizzapilot/delivery-time'] ) ? absint( $_POST['pizzapilot/delivery-time'] ) : 0;
 
-		// Validate delivery type
-		if ( empty( $delivery_type ) ) {
-			wc_add_notice( __( 'Please select a delivery type.', 'pizzapilot' ), 'error' );
-		}
-
-		// Validate delivery time
 		if ( empty( $delivery_time ) ) {
-			wc_add_notice( __( 'Please select a delivery time slot.', 'pizzapilot' ), 'error' );
 			return;
 		}
 

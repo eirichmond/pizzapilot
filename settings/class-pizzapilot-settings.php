@@ -862,11 +862,8 @@ class Pizzapilot_Settings {
 	public function get_formatted_delivery_slots() {
 		$slots = $this->get_delivery_time_slots();
 
-		// die early if no slots are found
-		if ( empty( $slots ) ) {
-			return array();
-		}
-
+		// Filter even when today has no slots left: an extension may supply
+		// slots for later dates once today's last slot has passed.
 		return apply_filters( 'pizzapilot_time_slots', $slots );
 	}
 }

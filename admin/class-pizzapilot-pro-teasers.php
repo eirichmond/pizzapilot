@@ -113,7 +113,7 @@ class PizzaPilot_Pro_Teasers {
 	 * @return   void
 	 */
 	public function render_upgrade_page() {
-		$upgrade_url = 'https://pizzapilotpro.com/pricing/';
+		$upgrade_url = 'https://pizzapilotpro.com/downloads/pizzapilotpro/';
 
 		?>
 		<div class="wrap pizzapilot-upgrade-wrap">
@@ -231,6 +231,6 @@ class PizzaPilot_Pro_Teasers {
 	 * @return   string    External URL to pricing page.
 	 */
 	public static function get_upgrade_url() {
-		return 'https://pizzapilotpro.com/pricing/';
+		return 'https://pizzapilotpro.com/downloads/pizzapilotpro/';
 	}
 }
