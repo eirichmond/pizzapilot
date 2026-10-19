@@ -3,7 +3,7 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -86,6 +86,11 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.4 =
+* Fixed: the classic (shortcode) checkout showed no Delivery Options or Delivery Time fields, so every order was rejected. Both fields now appear on the classic checkout as well as the Checkout block.
+* Fixed: on the classic checkout, the delivery-radius check never ran, so delivery could be chosen for a postcode outside the radius.
+* Fixed: the pizzapilot_time_slots filter was skipped once today's last slot had passed, so extensions offering slots on later dates showed no times for the rest of the day.
+
 = 1.2.3 =
 * Changed: the Plugin URI now points to pizzapilotpro.com, the official PizzaPilot site.
 * Improved: the External Services section now names the operator of postcodes.io (Ideal Postcodes) and links to its terms of service and privacy policy.
@@ -122,6 +127,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * WooCommerce block and classic checkout support
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+Fixes the classic (shortcode) checkout, which showed no delivery fields and rejected every order. Recommended for all stores using the classic checkout.
 
 = 1.2.3 =
 Readme and plugin header updates only. No change to plugin behaviour.
