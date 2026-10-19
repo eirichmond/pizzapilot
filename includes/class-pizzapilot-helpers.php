@@ -43,7 +43,7 @@ class Pizzapilot_Helpers {
 		return sprintf(
 			/* translators: %s: opening and closing anchor tags for the upgrade link */
 			__( 'Upgrade to %1$sPizzaPilot Pro%2$s for more advanced features.', 'pizzapilot' ),
-			'<a href="https://pizzapilotpro.com/pricing/">',
+			'<a href="https://pizzapilotpro.com/downloads/pizzapilotpro/">',
 			'</a>'
 		);
 	}

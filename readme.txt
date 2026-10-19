@@ -24,7 +24,7 @@ PizzaPilot helps local pizzerias manage delivery and collection orders through W
 
 PizzaPilot uses the WooCommerce Additional Checkout Fields API for seamless integration with the checkout flow.
 
-**PizzaPilot Pro** extends the free version with future date ordering, slot capacity limits, recurring slot templates, interactive Mapbox delivery maps with What3Words, drag-and-drop kitchen UI, and more. [Learn more](https://pizzapilotpro.com/pricing/).
+**PizzaPilot Pro** extends the free version with future date ordering, slot capacity limits, recurring slot templates, interactive Mapbox delivery maps with What3Words, drag-and-drop kitchen UI, and more. [Learn more](https://pizzapilotpro.com/downloads/pizzapilotpro/).
 
 == External Services ==
 
@@ -89,6 +89,7 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 = 1.2.4 =
 * Fixed: the classic (shortcode) checkout showed no Delivery Options or Delivery Time fields, so every order was rejected. Both fields now appear on the classic checkout as well as the Checkout block.
 * Fixed: on the classic checkout, the delivery-radius check never ran, so delivery could be chosen for a postcode outside the radius.
+* Changed: "Upgrade to Pro" and "Learn more" links now go to the PizzaPilot Pro product page.
 * Fixed: the pizzapilot_time_slots filter was skipped once today's last slot had passed, so extensions offering slots on later dates showed no times for the rest of the day.
 
 = 1.2.3 =
