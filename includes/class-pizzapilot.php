@@ -225,6 +225,9 @@ class Pizzapilot {
 		// Register checkout fields
 		$this->loader->add_action( 'woocommerce_init', $plugin_public, 'pizzapilot_register_checkout_fields' );
 
+		// Render the same fields on the classic (shortcode) checkout
+		$this->loader->add_filter( 'woocommerce_checkout_fields', $plugin_public, 'pizzapilot_add_classic_checkout_fields' );
+
 		// Validate checkout fields
 		$this->loader->add_action( 'woocommerce_checkout_process', $plugin_public, 'pizzapilot_validate_checkout_fields' );
 
