@@ -16,9 +16,9 @@
  * Plugin Name:       PizzaPilot
  * Plugin URI:        https://pizzapilotpro.com
  * Description:       PizzaPilot is designed to help small pizzerias set up time slot-based ordering and delivery radius checks within WooCommerce. It includes a basic frontend and backend interface for order management during kitchen hours
- * Version:           1.2.5
+ * Version:           1.2.6
  * Requires at least: 6.3
- * Requires PHP:      7.2
+ * Requires PHP:      8.2
  * Requires Plugins:  woocommerce
  * WC requires at least: 8.9
  * WC tested up to: 11.1
@@ -40,7 +40,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PIZZAPILOT_VERSION', '1.2.5' );
+define( 'PIZZAPILOT_VERSION', '1.2.6' );
 define( 'PIZZAPILOT_NAME', 'PizzaPilot' );
 define( 'PIZZAPILOT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PIZZAPILOT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

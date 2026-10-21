@@ -49,7 +49,7 @@
 
 	<!-- PHP compatibility -->
 	<rule ref="PHPCompatibilityWP"/>
-	<config name="testVersion" value="7.2-"/>
+	<config name="testVersion" value="8.2-"/>
 	<config name="minimum_wp_version" value="6.3"/>
 
 	<!-- Show sniff codes in reports for targeted fixes -->
