@@ -3,8 +3,8 @@ Contributors: erichmond
 Tags: woocommerce, delivery, time slots, pizza, ordering
 Requires at least: 6.3
 Tested up to: 7.1
-Stable tag: 1.2.5
-Requires PHP: 7.2
+Stable tag: 1.2.6
+Requires PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 
 == Changelog ==
 
+= 1.2.6 =
+* Changed: PizzaPilot now requires PHP 8.2 or higher. PHP 8.1 and older no longer receive security updates. Sites on an older PHP version stay on 1.2.5 until the host's PHP is upgraded.
+
 = 1.2.5 =
 * Fixed: on the block checkout, PizzaPilot acted on the form as the customer filled it in. WooCommerce saves the form to a draft order along the way, and PizzaPilot treated each save as a placed order: it recorded the slot as booked and ran the delivery-radius check before the customer had finished. Both now happen only when the order is placed.
 * Fixed: clicking Update on an order in the admin could change its delivery time. WooCommerce showed the delivery fields there as dropdowns listing only the slots still on offer, so for an order whose slot had passed it saved a different time. The fields are no longer editable on the order screen; the PizzaPilot Delivery Details box shows them.
@@ -135,6 +138,9 @@ Yes. PizzaPilot declares HPOS compatibility and uses WooCommerce order methods f
 * WooCommerce block and classic checkout support
 
 == Upgrade Notice ==
+
+= 1.2.6 =
+Requires PHP 8.2 or higher. Check your host's PHP version before updating.
 
 = 1.2.5 =
 Stops the block checkout booking a slot before the order is placed, and stops the admin order screen changing an order's delivery time. Adds hooks for future dates and the kitchen screen.
