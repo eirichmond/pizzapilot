@@ -44,3 +44,6 @@ vendor/
 # Plugin Check reports (generated)
 pizzapilot-plugin-checker.md
 pizzapilot-*-php-*.md
+
+# Private working notes (synced via the private pizzapilot-docs repo)
+pizzapilot-review-fix.md
